@@ -1,0 +1,84 @@
+/* Centriranje cele forme na ekranu */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f5f7fb;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Manja forma (card) */
+.card {
+  width: 320px; /* manja širina */
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(16,24,40,0.08);
+  padding: 24px;
+}
+
+/* Naslov */
+.page-title {
+  margin: 0 0 20px 0;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  color: #2b6cb0;
+}
+
+/* Redovi forme */
+.form-row {
+  display: flex;
+  flex-direction: column; /* label iznad inputa */
+  margin-bottom: 15px;
+}
+
+.form-row label {
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #0f172a;
+}
+
+.form-row input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+}
+
+.form-row input:focus {
+  border-color: #2b6cb0;
+  box-shadow: 0 0 0 4px rgba(43,108,176,0.08);
+}
+
+/* Dugme */
+.submit-row {
+  text-align: center;
+  margin-top: 12px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  background-color: #2b6cb0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+button[type="submit"]:hover {
+  background-color: #235789;
+}
+
+/* Responsive */
+@media (max-width: 360px) {
+  .card {
+    width: 90%;
+    padding: 20px;
+  }
+}
