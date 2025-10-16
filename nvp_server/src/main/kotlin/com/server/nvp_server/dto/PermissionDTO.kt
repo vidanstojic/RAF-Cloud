@@ -1,4 +1,6 @@
 package com.server.nvp_server.dto
 
-class PermissionDTO {
-}
+data class PermissionDTO(
+    val id: Long?,
+    val name: String
+)
