@@ -1,4 +1,4 @@
-package com.example.nvp_server
+package com.server.nvp_server
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
