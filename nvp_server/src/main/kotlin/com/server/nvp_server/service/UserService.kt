@@ -9,18 +9,19 @@ class UserService(
     private val userRepository: UserRepository
 ) {
 
-    fun createUser(firstName: String,lastName:String, email: String, password: String): User {
+    fun createUser(user: User): User {
 
         val user = User(
-            firstName = firstName,
-            lastName = lastName,
-            email = email,
-            password = password
+            firstName = user.firstName,
+            lastName = user.lastName,
+            email = user.email,
+            password = user.password
         )
 
         // Snimamo u bazu
         return userRepository.save(user)
     }
+
 
     fun getUserById(id: Long): User? {
         return userRepository.findById(id).orElse(null)
