@@ -1,0 +1,26 @@
+<div class="management-container">
+  <h1>Page for users</h1>
+
+  <div class="actions">
+    <button class="add-user-btn" (click)="goToAddUser()">Add User</button>
+  </div>
+
+  <table class="users-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Last name</th>
+        <th>Email</th>
+        <th>Permissions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.firstName }}</td>
+        <td>{{ user.lastName }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.permissions.join(', ') }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

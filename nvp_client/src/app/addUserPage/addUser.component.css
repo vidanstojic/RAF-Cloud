@@ -1,0 +1,60 @@
+.add-user-container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2b6cb0;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-row label {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.form-row input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+
+.form-row input:focus {
+  border-color: #2b6cb0;
+  box-shadow: 0 0 0 4px rgba(43,108,176,0.08);
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #2b6cb0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button[type="submit"]:hover {
+  background-color: #235789;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 12px;
+  font-weight: 600;
+}

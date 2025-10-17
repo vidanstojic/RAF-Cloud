@@ -1,0 +1,31 @@
+<div class="add-user-container">
+  <h1>Page for adding user</h1>
+
+  <form (ngSubmit)="addUser()">
+
+    <div class="form-row">
+      <label for="firstName">Name</label>
+      <input id="firstName" [(ngModel)]="firstName" name="firstName" required />
+    </div>
+
+    <div class="form-row">
+      <label for="lastName">Last name</label>
+      <input id="lastName" [(ngModel)]="lastName" name="lastName" required />
+    </div>
+
+    <div class="form-row">
+      <label for="email">Email</label>
+      <input id="email" type="email" [(ngModel)]="email" name="email" required />
+    </div>
+
+    <div class="form-row">
+      <label for="permissions">Permissions</label>
+      <input id="permissions" [(ngModel)]="permissions" name="permissions" placeholder="Admin, Edit, View" required />
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <button type="submit">Add User</button>
+  </form>
+</div>
+
