@@ -1,0 +1,24 @@
+<div class="error-log-container">
+  <h2>Error's history</h2>
+
+  <table class="error-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Machine ID</th>
+        <th>Operation</th>
+        <th>Message</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let err of errors">
+        <td>{{ err.date }}</td>
+        <td>{{ err.machineId }}</td>
+        <td>{{ err.operation }}</td>
+        <td>{{ err.message }}</td>
+        <td>{{ err.createdBy }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
