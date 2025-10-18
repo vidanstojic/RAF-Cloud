@@ -1,0 +1,70 @@
+/* ----- page container (same as add-user) ----- */
+.edit-user-container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ----- title ----- */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2b6cb0;
+  font-weight: 700;
+}
+
+/* ----- form rows ----- */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-row label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.form-row input {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-row input:focus {
+  border-color: #2b6cb0;
+  box-shadow: 0 0 0 4px rgba(43, 108, 176, 0.08);
+}
+
+/* ----- primary button (identical to “Add User”) ----- */
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #2b6cb0;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #235789;
+}
+
+/* ----- responsive tweaks ----- */
+@media (max-width: 480px) {
+  .edit-user-container {
+    padding: 20px;
+  }
+}

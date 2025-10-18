@@ -5,7 +5,7 @@ import {HomeComponent} from "./homePage/home.component";
 import {ManagementComponent} from "./managementPage/management.component";
 import {AddUserComponent} from "./addUserPage/addUser.component";
 import { CreateMachineComponent } from './creatingMachinePage/machine.component';
-
+import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
 const routes: Routes = [
   {
     path: "",
@@ -23,6 +23,9 @@ const routes: Routes = [
   { 
     path: 'create-machine', 
     component: CreateMachineComponent
+  },
+  {
+     path: 'edit-user/:id', component: EditUserComponent 
   },
 
 ];

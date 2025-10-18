@@ -35,4 +35,14 @@ class UserService(
     fun deleteUser(id: Long) {
         userRepository.deleteById(id)
     }
+    fun updateUser(id: Long, incoming: User): User {
+        val existing = userRepository.findById(id).orElseThrow()
+        existing.firstName  = incoming.firstName
+        existing.lastName   = incoming.lastName
+        existing.email      = incoming.email          
+        existing.password   = incoming.password
+        existing.permissions.clear()
+        existing.permissions.addAll(incoming.permissions)
+        return userRepository.save(existing)
+    }
 }
