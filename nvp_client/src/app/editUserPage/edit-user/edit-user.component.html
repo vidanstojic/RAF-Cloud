@@ -1,0 +1,23 @@
+<div class="edit-user-container">
+  <h1>Edit user</h1>
+
+  <form (ngSubmit)="save()">
+    <div class="form-row">
+      <label>Name</label>
+      <input [(ngModel)]="user.firstName" name="firstName" required>
+    </div>
+    <div class="form-row">
+      <label>Last name</label>
+      <input [(ngModel)]="user.lastName" name="lastName" required>
+    </div>
+    <div class="form-row">
+      <label>Email</label>
+      <input type="email" [(ngModel)]="user.email" name="email" required>
+    </div>
+    <div class="form-row">
+      <label>Permissions</label>
+      <input [(ngModel)]="permissions" name="permissions" placeholder="Admin, Edit, View">
+    </div>
+    <button type="submit">Save</button>
+  </form>
+</div>

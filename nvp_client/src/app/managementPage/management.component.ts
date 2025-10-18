@@ -1,12 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
-interface User {
-  firstName: string;
-  lastName: string;
-  email: string;
-  permissions: string[];
-}
+import { UserService, User } from '../services/user.service';   
 
 @Component({
   selector: 'app-management',
@@ -14,19 +8,23 @@ interface User {
   styleUrls: ['./management.component.css']
 })
 export class ManagementComponent implements OnInit {
+  users: User[] = [];          
 
-  users: User[] = [
-    { firstName: 'Marko', lastName: 'Marković', email: 'marko@example.com', permissions: ['Admin', 'Edit'] },
-    { firstName: 'Jelena', lastName: 'Jovanović', email: 'jelena@example.com', permissions: ['View'] },
-    { firstName: 'Petar', lastName: 'Petrović', email: 'petar@example.com', permissions: ['Edit', 'View'] },
-    { firstName: 'Ana', lastName: 'Anić', email: 'ana@example.com', permissions: ['Admin'] }
-  ];
+  constructor(private userService: UserService,
+              private router: Router) {}
 
-  constructor(private router: Router) { }
+  ngOnInit(): void {
+    this.loadUsers();          
+  }
 
-  ngOnInit(): void { }
+  private loadUsers(): void {
+    this.userService.getAll().subscribe({
+      next: data => this.users = data,
+      error: err => console.error('Cannot load users', err)
+    });
+  }
 
-  goToAddUser() {
+  goToAddUser(): void {
     this.router.navigate(['/add-user']);
   }
 }

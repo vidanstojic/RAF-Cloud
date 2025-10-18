@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from '../services/user.service';   
 
 @Component({
   selector: 'app-add-user',
@@ -7,21 +8,40 @@ import { Router } from '@angular/router';
   styleUrls: ['./addUser.component.css']
 })
 export class AddUserComponent {
+  firstName = '';
+  lastName  = '';
+  email     = '';
+  permissions = '';          
+  errorMessage = '';
 
-  firstName: string = '';
-  lastName: string = '';
-  email: string = '';
-  permissions: string = '';
+  constructor(private userService: UserService,
+              private router: Router) {}
 
-  errorMessage: string = '';
-
-  constructor(private router: Router) { }
-
-  addUser() {
+  addUser(): void {
     if (!this.firstName || !this.lastName || !this.email || !this.permissions) {
       this.errorMessage = 'Sva polja su obavezna!';
       return;
     }
-    this.router.navigate(['/management']);
+
+    const dto = {
+      firstName: this.firstName.trim(),
+      lastName : this.lastName.trim(),
+      email    : this.email.trim(),
+      
+      permissions: this.permissions
+                     .split(',')
+                     .map(p => p.trim())
+                     .filter(p => p.length > 0),
+      
+      password: 'changeme'
+    };
+
+    this.userService.create(dto).subscribe({
+      next: () => this.router.navigate(['/management']),
+      error: err => {
+        console.error(err);
+        this.errorMessage = 'Greška pri čuvanju korisnika.';
+      }
+    });
   }
 }
