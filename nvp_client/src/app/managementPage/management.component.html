@@ -3,6 +3,7 @@
 
   <div class="actions">
     <button class="add-user-btn" (click)="goToAddUser()">Add User</button>
+    
   </div>
 
   <table class="users-table">
@@ -12,6 +13,7 @@
         <th>Last name</th>
         <th>Email</th>
         <th>Permissions</th>
+        <th></th>   <!-- actions -->
       </tr>
     </thead>
     <tbody>
@@ -20,6 +22,9 @@
         <td>{{ user.lastName }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.permissions.join(', ') }}</td>
+        <td>
+          <button [routerLink]="['/edit-user', user.id]">Edit</button>
+        </td>
       </tr>
     </tbody>
   </table>

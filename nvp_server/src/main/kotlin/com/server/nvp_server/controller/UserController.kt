@@ -1,5 +1,7 @@
-import com.server.nvp_server.dto.UserDTO
+package com.server.nvp_server.controller
 
+
+import com.server.nvp_server.dto.UserDTO
 import com.server.nvp_server.service.UserService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,4 +33,8 @@ class UserController(private val userService: UserService) {
     fun deleteUser(@PathVariable id: Long) {
         userService.deleteUser(id)
     }
+    @PutMapping("/{id}")
+    fun updateUser(@PathVariable id: Long,
+                   @RequestBody dto: UserDTO): UserDTO =
+        UserMapper.toDTO(userService.updateUser(id, UserMapper.toEntity(dto)))
 }
