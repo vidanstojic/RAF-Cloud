@@ -1,0 +1,36 @@
+<div class="create-machine-container">
+  <h2>Create New Machine</h2>
+
+  <form [formGroup]="machineForm" (ngSubmit)="onSubmit()">
+    <div class="form-field">
+      <label for="name">Machine Name</label>
+      <input id="name" type="text" formControlName="name" placeholder="Enter machine name" />
+      <small *ngIf="machineForm.get('name')?.invalid && machineForm.get('name')?.touched">
+        Name is required
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="type">Machine Type</label>
+      <select id="type" formControlName="type">
+        <option value="" disabled selected>Select machine type</option>
+        <option *ngFor="let type of machineTypes" [value]="type.value">
+          {{ type.label }}
+        </option>
+      </select>
+      <small *ngIf="machineForm.get('type')?.invalid && machineForm.get('type')?.touched">
+        Select a machine type
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" placeholder="Short description of the machine"></textarea>
+      <small *ngIf="machineForm.get('description')?.invalid && machineForm.get('description')?.touched">
+        Description is required
+      </small>
+    </div>
+
+    <button type="submit" class="btn-primary">Create Machine</button>
+  </form>
+</div>

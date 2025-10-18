@@ -4,6 +4,7 @@ import {LoginComponent} from "./loginPage/login.component";
 import {HomeComponent} from "./homePage/home.component";
 import {ManagementComponent} from "./managementPage/management.component";
 import {AddUserComponent} from "./addUserPage/addUser.component";
+import { CreateMachineComponent } from './creatingMachinePage/machine.component';
 
 const routes: Routes = [
   {
@@ -18,7 +19,11 @@ const routes: Routes = [
     component: ManagementComponent },
   { path: 'add-user', 
     component: AddUserComponent 
-  }
+  },
+  { 
+    path: 'create-machine', 
+    component: CreateMachineComponent
+  },
 
 ];
 

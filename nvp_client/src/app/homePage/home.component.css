@@ -4,17 +4,17 @@
   min-height: 100vh;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background: #f5f7fb;
-  align-items: center; /* centriranje */
+  align-items: center;
 }
 
-/* Maksimalna širina stranice */
+
 .container {
   width: 100%;
-  max-width: 1200px; /* maksimalna širina */
+  max-width: 1200px; 
   margin: 0 auto;
 }
 
-/* Meni / header */
+
 .top-menu {
   display: flex;
   justify-content: space-between;
@@ -29,7 +29,7 @@
   margin: 20px 0 40px 0;
 }
 
-/* Logo i tekst */
+
 .logo-section {
   display: flex;
   align-items: center;
@@ -47,7 +47,7 @@
   letter-spacing: 1px;
 }
 
-/* Search deo u meniju */
+
 .search-section {
   display: flex;
   align-items: center;
@@ -76,21 +76,21 @@
   background: #e2e8f0;
 }
 
-/* Glavni deo stranice */
+
 .main-content {
   flex: 1;
   width: 100%;
   padding: 0 20px 40px 20px;
 }
 
-/* Kartice idu vertikalno */
+
 .card-column {
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
 
-/* Pojedinačne kartice */
+
 .card {
   background: white;
   border-radius: 16px;
@@ -112,7 +112,7 @@
   box-shadow: 0 12px 24px rgba(0,0,0,0.18);
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .top-menu {
     flex-direction: column;

@@ -10,6 +10,9 @@ import { AddUserComponent } from './addUserPage/addUser.component';
 //import { SearchComponent } from './searchPage/search.component';
 //import { ManagementComponent } from './management/management.component';
 //import { ErrorComponent } from './errorPage/error.component';
+import { CreateMachineComponent } from './creatingMachinePage/machine.component';
+import { ReactiveFormsModule } from '@angular/forms'; 
+
 import {FormsModule} from "@angular/forms";
 
 @NgModule({
@@ -20,12 +23,13 @@ import {FormsModule} from "@angular/forms";
  //   SearchComponent,
     ManagementComponent,
     AddUserComponent,
- //   ErrorComponent
+    CreateMachineComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
