@@ -1,0 +1,26 @@
+.error-log-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.error-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.error-table th,
+.error-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.error-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #fafafa;
+}

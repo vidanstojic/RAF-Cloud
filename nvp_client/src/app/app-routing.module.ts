@@ -7,6 +7,7 @@ import {AddUserComponent} from "./addUserPage/addUser.component";
 import { CreateMachineComponent } from './creatingMachinePage/machine.component';
 import { SearchComponent } from './searchPage/search.component';
 import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
+import { ErrorComponent } from './errorPage/error.component';
 const routes: Routes = [
   {
     path: "",
@@ -32,6 +33,8 @@ const routes: Routes = [
   {
      path: 'edit-user/:id', component: EditUserComponent
   },
+  { path: 'error', component: ErrorComponent }
+
 
 ];
 
