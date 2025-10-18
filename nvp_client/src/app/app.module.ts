@@ -7,11 +7,10 @@ import { LoginComponent } from './loginPage/login.component';
 import { HomeComponent } from './homePage/home.component';
 import { ManagementComponent } from './managementPage/management.component';
 import { AddUserComponent } from './addUserPage/addUser.component';
-//import { SearchComponent } from './searchPage/search.component';
-//import { ManagementComponent } from './management/management.component';
 //import { ErrorComponent } from './errorPage/error.component';
 import { CreateMachineComponent } from './creatingMachinePage/machine.component';
 import { ReactiveFormsModule } from '@angular/forms'; 
+import { SearchComponent } from './searchPage/search.component'
 
 import {FormsModule} from "@angular/forms";
 
@@ -20,7 +19,7 @@ import {FormsModule} from "@angular/forms";
     AppComponent,
     LoginComponent,
     HomeComponent,
- //   SearchComponent,
+    SearchComponent,
     ManagementComponent,
     AddUserComponent,
     CreateMachineComponent,

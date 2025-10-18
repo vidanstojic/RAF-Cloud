@@ -1,0 +1,71 @@
+<div class="search-container">
+  <div class="search-card">
+    <h2>Search machines</h2>
+
+    <div class="form-row">
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="qName" name="qName" placeholder="Input name (or part of it)">
+    </div>
+
+    <div class="form-row">
+      <label>Status:</label>
+      <select [(ngModel)]="qStatus" name="qStatus">
+        <option value="all">All</option>
+        <option value="active">Active</option>
+        <option value="deleted">Deleted</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label>Availability:</label>
+      <select [(ngModel)]="qAvailability" name="qAvailability">
+        <option value="all">All</option>
+        <option value="free">Free</option>
+        <option value="taken">Taken</option>
+      </select>
+    </div>
+
+    <div class="form-row dates-row">
+      <div>
+        <label>From date:</label>
+        <input type="date" [(ngModel)]="qStartDate" name="qStartDate">
+      </div>
+      <div>
+        <label>To date:</label>
+        <input type="date" [(ngModel)]="qEndDate" name="qEndDate">
+      </div>
+    </div>
+
+    <div class="buttons-row">
+      <button (click)="search()" class="btn-search">Search</button>
+      <button (click)="resetAndShowAll()" class="btn-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="results-card">
+    <h3>Results ({{ results.length }})</h3>
+
+    <table class="results-table" *ngIf="results && results.length > 0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Used</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of results">
+          <td>{{ m.name }}</td>
+          <td>{{ m.status ? 'Free' : 'deleted' }}</td>
+          <td>{{ m.availability }}</td>
+          <td>{{ formatDisplayDate(m.createdAt) }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="results && results.length === 0" class="no-results">
+      No results found.
+    </div>
+  </div>
+</div>
