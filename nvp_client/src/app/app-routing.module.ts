@@ -5,6 +5,8 @@ import {HomeComponent} from "./homePage/home.component";
 import {ManagementComponent} from "./managementPage/management.component";
 import {AddUserComponent} from "./addUserPage/addUser.component";
 import { CreateMachineComponent } from './creatingMachinePage/machine.component';
+import { SearchComponent } from './searchPage/search.component';
+
 
 const routes: Routes = [
   {
@@ -24,6 +26,11 @@ const routes: Routes = [
     path: 'create-machine', 
     component: CreateMachineComponent
   },
+  { 
+    path: 'search-machines', 
+    component: SearchComponent 
+  }
+
 
 ];
 
