@@ -1,13 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-interface ErrorMessage {
-  id: number;
-  date: string;
-  machineId: string;
-  operation: string;
-  message: string;
-  createdBy: string;
-}
+import { ErrorLogService, ErrorLogDTO } from '../services/error-log.service';
 
 @Component({
   selector: 'app-error-log',
@@ -15,37 +7,15 @@ interface ErrorMessage {
   styleUrls: ['./error.component.css']
 })
 export class ErrorComponent implements OnInit {
+  errors: ErrorLogDTO[] = [];
 
-  // Za sada mock podaci
-  errors: ErrorMessage[] = [
-    {
-      id: 1,
-      date: '2024-11-01',
-      machineId: 'VM-001',
-      operation: 'start',
-      message: 'Mašina nije ugašena, ne može da se upali.',
-      createdBy: 'marko'
-    },
-    {
-      id: 2,
-      date: '2024-11-02',
-      machineId: 'VM-002',
-      operation: 'stop',
-      message: 'Mašina nije upaljena, ne može da se ugasi.',
-      createdBy: 'jelena'
-    },
-    {
-      id: 3,
-      date: '2024-11-03',
-      machineId: 'VM-003',
-      operation: 'restart',
-      message: 'Mašina nije upaljena, ne može da se restartuje.',
-      createdBy: 'marko'
-    }
-  ];
+  constructor(private service: ErrorLogService) {}
 
-  constructor() { }
+  ngOnInit(): void {
+    this.loadLogs();
+  }
 
-  ngOnInit(): void { }
-
+  private loadLogs(): void {
+    this.service.getAll().subscribe(list => this.errors = list);
+  }
 }

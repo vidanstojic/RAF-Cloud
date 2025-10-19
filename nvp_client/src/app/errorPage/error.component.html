@@ -8,16 +8,16 @@
         <th>Machine ID</th>
         <th>Operation</th>
         <th>Message</th>
-        <th>Created</th>
+        <!-- <th>Created</th> -->
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let err of errors">
-        <td>{{ err.date }}</td>
+        <td>{{ err.date | date:'dd.MM.yyyy.' }}</td>
         <td>{{ err.machineId }}</td>
         <td>{{ err.operation }}</td>
         <td>{{ err.message }}</td>
-        <td>{{ err.createdBy }}</td>
+        <!-- <td>{{ err.createdBy }}</td>    -->
       </tr>
     </tbody>
   </table>
