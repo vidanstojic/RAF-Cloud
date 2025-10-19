@@ -33,7 +33,8 @@ const routes: Routes = [
   {
      path: 'edit-user/:id', component: EditUserComponent
   },
-  { path: 'error', component: ErrorComponent }
+  { path: 'error', component: ErrorComponent },
+  { path: 'search-machines', component: SearchComponent },
 
 
 ];
