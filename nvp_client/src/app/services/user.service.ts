@@ -15,7 +15,7 @@ export interface User {
   providedIn: 'root'
 })
 export class UserService {
-  private readonly api = '/api/users';   // Spring backend
+  private readonly api = '/api/users';   
 
   constructor(private http: HttpClient) {}
 

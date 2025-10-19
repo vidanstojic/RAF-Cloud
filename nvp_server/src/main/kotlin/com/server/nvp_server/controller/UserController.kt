@@ -3,6 +3,7 @@ package com.server.nvp_server.controller
 
 import com.server.nvp_server.dto.UserDTO
 import com.server.nvp_server.service.UserService
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,7 +35,12 @@ class UserController(private val userService: UserService) {
         userService.deleteUser(id)
     }
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable id: Long,
-                   @RequestBody dto: UserDTO): UserDTO =
-        UserMapper.toDTO(userService.updateUser(id, UserMapper.toEntity(dto)))
+    fun updateUser(@PathVariable id: Long, @RequestBody dto: UserDTO): ResponseEntity<UserDTO> =
+        try {
+            ResponseEntity.ok(UserMapper.toDTO(userService.updateUser(id, dto)))
+        } catch (ex: NoSuchElementException) {
+            ResponseEntity.notFound().build()
+        } catch (ex: IllegalArgumentException) {
+            ResponseEntity.badRequest().build()
+        }
 }

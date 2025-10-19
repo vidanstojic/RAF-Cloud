@@ -1,6 +1,8 @@
 package com.server.nvp_server.service
 
+
 import com.server.nvp_server.model.Machine
+import com.server.nvp_server.model.MachineState
 import com.server.nvp_server.model.User
 import com.server.nvp_server.repository.MachineRepository
 import org.springframework.stereotype.Service
@@ -28,5 +30,21 @@ class MachineService(private val machineRepository: MachineRepository) {
         val machine = getMachineById(id)
         machine.active = false // soft delete
         machineRepository.save(machine)
+    }
+    fun searchMachines(name: String?, type: String?, state: String?): List<Machine> {
+        val base = machineRepository.findAll()
+
+        return base
+            .asSequence()
+            .filter { m ->
+                name.isNullOrBlank() || m.name.contains(name, ignoreCase = true)
+            }
+            .filter { m ->
+                type.isNullOrBlank() || m.type.equals(type, ignoreCase = true)
+            }
+            .filter { m ->
+                state.isNullOrBlank() || m.state.name.equals(state, ignoreCase = true)
+            }
+            .toList()
     }
 }

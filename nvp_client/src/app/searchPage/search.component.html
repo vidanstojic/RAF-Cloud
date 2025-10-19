@@ -4,68 +4,46 @@
 
     <div class="form-row">
       <label>Name:</label>
-      <input type="text" [(ngModel)]="qName" name="qName" placeholder="Input name (or part of it)">
+      <input type="text" [(ngModel)]="qName" name="qName" placeholder="Part of name">
     </div>
 
     <div class="form-row">
-      <label>Status:</label>
-      <select [(ngModel)]="qStatus" name="qStatus">
+      <label>Type:</label>
+      <select [(ngModel)]="qType" name="qType">
         <option value="all">All</option>
-        <option value="active">Active</option>
-        <option value="deleted">Deleted</option>
+        <option value="LINUX">Linux</option>
+        <option value="WINDOWS">Windows</option>
+        <option value="MAC">MacOS</option>
       </select>
     </div>
 
     <div class="form-row">
-      <label>Availability:</label>
-      <select [(ngModel)]="qAvailability" name="qAvailability">
+      <label>State:</label>
+      <select [(ngModel)]="qState" name="qState">
         <option value="all">All</option>
-        <option value="free">Free</option>
-        <option value="taken">Taken</option>
+        <option value="RUNNING">Running</option>
+        <option value="STOPPED">Stopped</option>
+        <option value="RESTARTING">Restarting</option>
       </select>
-    </div>
-
-    <div class="form-row dates-row">
-      <div>
-        <label>From date:</label>
-        <input type="date" [(ngModel)]="qStartDate" name="qStartDate">
-      </div>
-      <div>
-        <label>To date:</label>
-        <input type="date" [(ngModel)]="qEndDate" name="qEndDate">
-      </div>
     </div>
 
     <div class="buttons-row">
       <button (click)="search()" class="btn-search">Search</button>
-      <button (click)="resetAndShowAll()" class="btn-reset">Reset</button>
+      <button (click)="reset()"  class="btn-reset">Reset</button>
     </div>
   </div>
 
   <div class="results-card">
     <h3>Results ({{ results.length }})</h3>
 
-    <table class="results-table" *ngIf="results && results.length > 0">
+    <table class="results-table" *ngIf="results.length">
       <thead>
         <tr>
           <th>Name</th>
-          <th>Status</th>
-          <th>Used</th>
-          <th>Created</th>
+          <th>Type</th>
+          <th>State</th>
+          <th>Active</th>
+          <th>Description</th>
         </tr>
       </thead>
-      <tbody>
-        <tr *ngFor="let m of results">
-          <td>{{ m.name }}</td>
-          <td>{{ m.status ? 'Free' : 'deleted' }}</td>
-          <td>{{ m.availability }}</td>
-          <td>{{ formatDisplayDate(m.createdAt) }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div *ngIf="results && results.length === 0" class="no-results">
-      No results found.
-    </div>
-  </div>
-</div>
+      
