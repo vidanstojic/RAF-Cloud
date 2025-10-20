@@ -40,10 +40,30 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Type</th>
-          <th>State</th>
-          <th>Active</th>
-          <th>Description</th>
+          <th>Status</th>
+          <th>Used</th>
+          <th>Created</th>
+          <th>Actions</th>
         </tr>
       </thead>
-      
+      <tbody>
+        <tr *ngFor="let m of results">
+          <td>{{ m.name }}</td>
+          <td>{{ m.status ? 'Active' : 'Deleted' }}</td>
+          <td>{{ m.availability }}</td>
+          <td>{{ formatDisplayDate(m.createdAt) }}</td>
+          <td>
+            <button (click)="turnOn(m)" [disabled]="!canTurnOn(m)" class="btn-upali">Upali</button>
+            <button (click)="turnOff(m)" [disabled]="!canTurnOff(m)" class="btn-ugasi">Ugasi</button>
+            <button (click)="restart(m)" [disabled]="!canRestart(m)" class="btn-restart">Restartuj</button>
+            <button (click)="destroy(m)" [disabled]="!canDestroy(m)" class="btn-unisti">Uništi</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="results && results.length === 0" class="no-results">
+      No results found.
+    </div>
+  </div>
+</div>
