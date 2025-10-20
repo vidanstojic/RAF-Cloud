@@ -18,18 +18,19 @@ export class MachineService {
 
   constructor(private http: HttpClient) {}
 
-  /* create */
   create(dto: MachineDTO): Observable<MachineDTO> {
-    return this.http.post<MachineDTO>(this.api, dto, { withCredentials: true }); // ← NEW
-  }
-
+  return this.http.post<MachineDTO>(this.api, dto, { withCredentials: true });
+}
+getMachinesByUser(userId: number): Observable<MachineDTO[]> {
+  return this.http.get<MachineDTO[]>(`${this.api}/user/${userId}`);
+}
   /* search */
   search(name?: string, type?: string, state?: string): Observable<MachineDTO[]> {
     let params = new HttpParams();
     if (name)   params = params.set('name', name);
     if (type)   params = params.set('type', type);
     if (state)  params = params.set('state', state);
-    return this.http.get<MachineDTO[]>(this.api, { params, withCredentials: true }); // ← NEW
+    return this.http.get<MachineDTO[]>(this.api, { params, withCredentials: true }); 
   }
 
   /* actions */

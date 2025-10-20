@@ -29,16 +29,19 @@ export class CreateMachineComponent {
   onSubmit(): void {
     if (this.machineForm.invalid) return;
 
+    const user = JSON.parse(localStorage.getItem('loggedUser') || '{}');
     const dto: MachineDTO = {
+      id: localStorage.getItem('loggedUser') ? undefined : -1,
       name: this.machineForm.value.name,
       type: this.machineForm.value.type,
       description: this.machineForm.value.description,
+      createdBy: user.id          // ← NEW
     };
 
     this.machineService.create(dto).subscribe({
       next: () => {
         alert('Machine created');
-        this.router.navigate(['/search-machines']);   // go to search after save
+        this.router.navigate(['/search-machines']);
       },
       error: err => alert(err.message)
     });
