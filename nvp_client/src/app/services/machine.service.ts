@@ -32,6 +32,18 @@ getMachinesByUser(userId: number): Observable<MachineDTO[]> {
     if (state)  params = params.set('state', state);
     return this.http.get<MachineDTO[]>(this.api, { params, withCredentials: true }); 
   }
+  searchUserMachines(
+  userId: number,
+  name?: string,
+  type?: string,
+  state?: string
+): Observable<MachineDTO[]> {
+  let params = new HttpParams();
+  if (name)  params = params.set('name', name);
+  if (type)  params = params.set('type', type);
+  if (state) params = params.set('state', state);
+  return this.http.get<MachineDTO[]>(`${this.api}/user/${userId}/search`, { params });
+}
 
   /* actions */
   start(id: number): Observable<void> {
