@@ -25,5 +25,6 @@ object MachineMapper {
         state = dto.state?.let { MachineState.valueOf(it) } ?: MachineState.OFF,
         active = dto.active ?: true,
         uniqueId = dto.uniqueId ?: UUID.randomUUID().toString()
+
     )
 }
