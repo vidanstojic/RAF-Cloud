@@ -9,7 +9,7 @@ object UserMapper {
         lastName = user.lastName,
         email = user.email,
         password = user.password,
-        permissions = user.permissions.map { it.name }
+        permissions = user.permissions.map { it.name }.toMutableList()
     )
 
     fun toEntity(dto: UserDTO) = User(
@@ -18,6 +18,6 @@ object UserMapper {
         lastName = dto.lastName,
         email = dto.email,
         password = dto.password,
-        permissions = dto.permissions.map { Permission(name = it) }.toMutableSet()
+        permissions = dto.permissions.map { Permission.valueOf(it) }.toMutableList()
     )
 }

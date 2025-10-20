@@ -5,7 +5,8 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "users")
 data class User(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
     @Column(nullable = false)
@@ -18,13 +19,14 @@ data class User(
     var email: String,
 
     @Column(nullable = false)
-    var password: String, // STAVITIIII POSLE HESIRAN PASSWORD
+    var password: String, // TODO: Hash password before saving
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
         name = "user_permissions",
-        joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "permission_id")]
+        joinColumns = [JoinColumn(name = "user_id")]
     )
-    var permissions: MutableSet<Permission> = mutableSetOf()
+    @Column(name = "permission")
+    @Enumerated(EnumType.STRING)
+    val permissions: MutableList<Permission> = mutableListOf()
 )

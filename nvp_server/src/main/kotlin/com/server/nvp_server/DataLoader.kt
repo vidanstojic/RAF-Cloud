@@ -1,6 +1,7 @@
 package com.server.nvp_server
 
 
+import com.server.nvp_server.model.Permission
 import com.server.nvp_server.model.User
 import com.server.nvp_server.repository.UserRepository
 import org.springframework.boot.CommandLineRunner
