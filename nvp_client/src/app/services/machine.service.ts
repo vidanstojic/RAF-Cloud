@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+type PowerState = 'on' | 'off';
+
 export interface MachineDTO {
   id?: number;
   name: string;
@@ -10,6 +12,10 @@ export interface MachineDTO {
   createdBy?: number;
   state?: string;
   active?: boolean;
+  powerState: PowerState;
+  starting?: boolean;
+  shuttingDown?: boolean;
+  restarting?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

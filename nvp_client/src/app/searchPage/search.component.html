@@ -56,11 +56,17 @@
           <td>{{ m.description }}</td>
           <td class="actions">
             <!-- add the methods below or remove buttons until implemented -->
-            <button (click)="start(m)"  [disabled]="m.state === 'RUNNING'"  class="btn-primary">Start</button>
+             <td>
+            <button (click)="turnOn(m)" [disabled]="!canTurnOn(m)" class="btn-upali">Upali</button>
+            <button (click)="turnOff(m)" [disabled]="!canTurnOff(m)" class="btn-ugasi">Ugasi</button>
+            <button (click)="restart(m)" [disabled]="!canRestart(m)" class="btn-restart">Restartuj</button>
+            <button (click)="destroy(m)" [disabled]="!canDestroy(m)" class="btn-unisti">Uništi</button>
+          </td>
+            <!-- <button (click)="start(m)"  [disabled]="m.state === 'RUNNING'"  class="btn-primary">Start</button>
             <button (click)="stop(m)"   [disabled]="m.state === 'STOPPED'"   class="btn-primary">Stop</button>
             <button (click)="restart(m)" [disabled]="m.state === 'RESTARTING'" class="btn-primary">Restart</button>
-            <button (click)="delete(m)"  class="btn-danger">Delete</button>
-          </td>
+            <button (click)="delete(m)"  class="btn-danger">Delete</button> -->
+          <!-- </td> -->
         </tr>
       </tbody>
     </table>
