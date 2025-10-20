@@ -10,15 +10,6 @@ class UserService(
 ) {
 
     fun createUser(user: User): User {
-
-        val user = User(
-            firstName = user.firstName,
-            lastName = user.lastName,
-            email = user.email,
-            password = user.password
-        )
-
-        // Snimamo u bazu
         return userRepository.save(user)
     }
 

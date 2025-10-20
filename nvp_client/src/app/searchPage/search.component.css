@@ -104,6 +104,29 @@
   font-weight: 700;
 }
 
+/* Dugmići za akcije */
+.results-table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 4px;
+  font-weight: 600;
+  color: white;
+  font-size: 13px;
+}
+
+.btn-upali { background-color: #22c55e; }    /* zeleni */
+.btn-ugasi { background-color: #ef4444; }    /* crveni */
+.btn-restart { background-color: #facc15; color: #000; } /* žuti */
+.btn-unisti { background-color: #6b7280; }  /* sivi */
+
+.results-table button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+  color: #9ca3af;
+}
+
 .no-results {
   padding: 18px;
   text-align: center;
