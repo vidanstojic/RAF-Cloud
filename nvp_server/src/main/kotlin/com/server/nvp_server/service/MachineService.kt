@@ -47,4 +47,17 @@ class MachineService(private val machineRepository: MachineRepository) {
             }
             .toList()
     }
+
+    fun searchUserMachines(
+        userId: Long,
+        name: String?,
+        type: String?,
+        state: String?
+    ): List<Machine> {
+        val base = machineRepository.findAllByCreatedById(userId)
+        return base
+            .filter { name.isNullOrBlank() || it.name.contains(name, ignoreCase = true) }
+            .filter { type.isNullOrBlank() || it.type.equals(type, ignoreCase = true) }
+            .filter { state.isNullOrBlank() || it.state.name.equals(state, ignoreCase = true) }
+    }
 }
