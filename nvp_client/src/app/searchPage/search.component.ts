@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 type Availability = 'free' | 'taken';
+type PowerState = 'on' | 'off';
 
 interface Machine {
   id: number;
@@ -9,6 +10,11 @@ interface Machine {
   availability: Availability;
   createdAt: Date;
   userId: number;
+  powerState: PowerState;
+  starting?: boolean;
+  shuttingDown?: boolean;
+  restarting?: boolean;
+
 }
 
 @Component({
@@ -19,11 +25,11 @@ interface Machine {
 export class SearchComponent implements OnInit {
 
   machines: Machine[] = [
-    { id: 1, name: 'VM-Alpha', status: true,  availability: 'free', createdAt: new Date('2024-11-01'), userId: 1 },
-    { id: 2, name: 'VM-Beta',  status: false, availability: 'taken',  createdAt: new Date('2024-10-25'), userId: 1 },
-    { id: 3, name: 'VM-Gamma', status: true,  availability: 'taken',  createdAt: new Date('2024-11-05'), userId: 2 },
-    { id: 4, name: 'VM-Delta', status: true,  availability: 'free', createdAt: new Date('2024-11-07'), userId: 1 },
-    { id: 5, name: 'VM-Epsilon', status: false, availability: 'free', createdAt: new Date('2024-09-15'), userId: 1 }
+    { id: 1, name: 'VM-Alpha', status: true,  availability: 'free', createdAt: new Date('2024-11-01'), userId: 1, powerState: 'off', starting: false },
+    { id: 2, name: 'VM-Beta',  status: false, availability: 'taken',  createdAt: new Date('2024-10-25'), userId: 1, powerState: 'off', starting: false },
+    { id: 3, name: 'VM-Gamma', status: true,  availability: 'taken',  createdAt: new Date('2024-11-05'), userId: 2, powerState: 'off', starting: false },
+    { id: 4, name: 'VM-Delta', status: true,  availability: 'free', createdAt: new Date('2024-11-07'), userId: 1, powerState: 'off', starting: false },
+    { id: 5, name: 'VM-Epsilon', status: false, availability: 'free', createdAt: new Date('2024-09-15'), userId: 1, powerState: 'off', starting: false },
   ];
 
   currentUserId: number = 1;
@@ -90,6 +96,7 @@ export class SearchComponent implements OnInit {
 
     this.results = list;
   }
+
   resetAndShowAll() {
     this.qName = '';
     this.qStatus = 'all';
@@ -98,5 +105,87 @@ export class SearchComponent implements OnInit {
     this.qEndDate = '';
     this.results = this.machines.filter(m => m.userId === this.currentUserId);
   }
+
+  canTurnOn(m: Machine): boolean {
+    return m.status === true && m.powerState === 'off' && !m.starting;
+  }
+
+  canTurnOff(m: Machine): boolean {
+    return m.status === true && m.powerState === 'on' && !m.shuttingDown;
+  }
+
+
+  canRestart(m: Machine): boolean {
+    return m.status === true && m.powerState === 'on' && !m.restarting;
+  }
+
+
+  canDestroy(m: Machine): boolean {
+    return m.status === true && m.powerState === 'off';
+  }
+
+  turnOn(m: Machine) {
+    if (this.canTurnOn(m)) {
+      m.starting = true;
+      console.log(`${m.name} se pokreće...`);
+
+      const delay = 10000;
+
+      setTimeout(() => {
+        m.powerState = 'on';
+        m.starting = false;
+        console.log(`${m.name} je sada upaljena.`);
+      }, delay);
+    }
+  }
+
+
+  turnOff(m: Machine) {
+    if (this.canTurnOff(m)) {
+      m.shuttingDown = true;
+      console.log(`${m.name} se gasi...`);
+
+      const delay = 10000;
+
+      setTimeout(() => {
+        m.powerState = 'off';
+        m.shuttingDown = false;
+        console.log(`${m.name} je sada ugašena.`);
+      }, delay);
+    }
+  }
+
+  restart(m: Machine) {
+    if (this.canRestart(m)) {
+      m.restarting = true;
+      console.log(`${m.name} se restartuje...`);
+
+      const totalDelay = 10000;
+      const halfDelay = Math.floor(totalDelay / 2);
+
+     
+      setTimeout(() => {
+        m.powerState = 'off';
+        console.log(`${m.name} se trenutno gasi...`);
+      }, halfDelay);
+
+      
+      setTimeout(() => {
+        m.powerState = 'on';
+        m.restarting = false;
+        console.log(`${m.name} je restartovana i upaljena.`);
+      }, totalDelay);
+    }
+  }
+
+
+  destroy(m: Machine) {
+    if (this.canDestroy(m)) {
+      m.status = false;
+      m.powerState = 'off';
+      console.log(`${m.name} je uništena.`);
+    }
+  }
+
 
 }
