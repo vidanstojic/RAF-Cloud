@@ -18,6 +18,6 @@ object UserMapper {
         lastName = dto.lastName,
         email = dto.email,
         password = dto.password,
-        permissions = dto.permissions.map { Permission.valueOf(it) }.toMutableList()
+        permissions = dto.permissions.map { Permission.valueOf(it.uppercase()) }.toMutableList()
     )
 }
