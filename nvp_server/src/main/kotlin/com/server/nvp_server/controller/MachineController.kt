@@ -4,6 +4,7 @@ import com.server.nvp_server.model.Machine
 import com.server.nvp_server.model.MachineState
 import com.server.nvp_server.service.MachineService
 import com.server.nvp_server.service.UserService
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.server.ResponseStatusException
 import java.security.Principal
 import java.util.UUID
 
@@ -28,6 +30,12 @@ class MachineController(
                     @RequestParam(required = false) type: String?,
                     @RequestParam(required = false) state: String?): List<MachineDTO> =
         machineService.searchMachines(name, type, state).map { MachineMapper.toDTO(it) }
+
+    @GetMapping("/user/{userId}")
+    fun getMachinesByUserId(@PathVariable userId: Long): List<MachineDTO> =
+        machineService.getMachinesByUser(userService.getUserById(userId)!!)
+            .map { MachineMapper.toDTO(it) }
+
 
     @PostMapping
     fun createMachine(
