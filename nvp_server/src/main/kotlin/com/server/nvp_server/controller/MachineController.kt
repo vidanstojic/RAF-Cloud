@@ -38,17 +38,12 @@ class MachineController(
 
 
     @PostMapping
-    fun createMachine(
-        @RequestBody dto: MachineDTO,
-        principal: Principal?
-    ): MachineDTO {
-
-        val owner = userService.getAllUsers().firstOrNull()
-            ?: throw RuntimeException("No user in DB")
-        return MachineMapper.toDTO(machineService.createMachine(
-            MachineMapper.toEntity(dto, owner), owner))
+    fun createMachine(@RequestBody dto: MachineDTO): MachineDTO {
+        val owner = userService.getUserById(dto.createdBy!!)   // ← use the id you receive
+        return MachineMapper.toDTO(
+            machineService.createMachine(MachineMapper.toEntity(dto, owner!!), owner)
+        )
     }
-
 //    @PutMapping("/{id}/start")
 //    fun startMachine(@PathVariable id: Long) = machineService.startMachine(id)
 //
