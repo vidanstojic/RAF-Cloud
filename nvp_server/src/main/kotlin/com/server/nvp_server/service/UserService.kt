@@ -1,6 +1,7 @@
 package com.server.nvp_server.service
 
 import com.server.nvp_server.dto.UserDTO
+import com.server.nvp_server.model.Permission
 import com.server.nvp_server.model.User
 import com.server.nvp_server.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -45,15 +46,15 @@ class UserService(
         existing.firstName = dto.firstName
         existing.lastName  = dto.lastName
         existing.email     = dto.email
-        existing.password  = dto.password          // later hash it
+        existing.password  = dto.password
 
-        // 4. replace permissions collection
-//        existing.permissions.clear()
-//        dto.permissions
-//            .map { Permission(name = it) }        // convert String → Permission
-//            .forEach { existing.permissions.add(it) }
 
-        // 5. save & return
+        existing.permissions.clear()
+        dto.permissions
+            .map { p -> Permission.valueOf(p.uppercase()) }
+            .forEach { existing.permissions.add(it) }
+
+
         return userRepository.save(existing)
     }
 }
