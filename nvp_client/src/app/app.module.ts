@@ -15,6 +15,7 @@ import { ErrorComponent } from './errorPage/error.component';
 import { CreateMachineComponent } from './creatingMachinePage/machine.component';
 import { SearchComponent } from './searchPage/search.component'
 import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { EditUserComponent } from './editUserPage/edit-user/edit-user.component'
     AddUserComponent,
     CreateMachineComponent,
     ErrorComponent,
-    EditUserComponent
+    EditUserComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

@@ -30,7 +30,6 @@ import { MachineService, MachineDTO } from '../services/machine.service';
   }
 
   search(): void {
-    /* ----  CALL  /user/{id}/search  WITH PARAMS  ---- */
     this.machineService.searchUserMachines(
       this.currentUserId,
       this.qName || undefined,
@@ -46,7 +45,6 @@ import { MachineService, MachineDTO } from '../services/machine.service';
     this.loadMyMachines();
   }
 
-  /* action buttons – unchanged */
     start(m: MachineDTO): void {
     this.machineService.start(m.id!).subscribe(() => this.loadMyMachines());
   }
@@ -54,10 +52,6 @@ import { MachineService, MachineDTO } from '../services/machine.service';
   stop(m: MachineDTO): void {
     this.machineService.stop(m.id!).subscribe(() => this.loadMyMachines());
   }
-
-  // restart(m: MachineDTO): void {
-  //   this.machineService.restart(m.id!).subscribe(() => this.loadMyMachines());
-  // }
 
   delete(m: MachineDTO): void {
     this.machineService.delete(m.id!).subscribe(() => this.loadMyMachines());
@@ -86,17 +80,17 @@ import { MachineService, MachineDTO } from '../services/machine.service';
   turnOn(m: MachineDTO) {
     if (this.canTurnOn(m)) {
       m.starting = true;
-      console.log(`${m.name} se pokreće...`);
+      console.log(`${m.name} is starting...`);
 
       const delay = 10000;
 
       setTimeout(() => {
         m.powerState = 'on';
         m.starting = false;
-        console.log(`${m.name} je sada upaljena.`);
+        console.log(`${m.name} is turned on.`);
       }, delay);
     }else{
-      console.log("Ne može da se upali mašina " + m.name);
+      console.log("Can not be turned on " + m.name);
     }
   }
 
@@ -104,14 +98,14 @@ import { MachineService, MachineDTO } from '../services/machine.service';
   turnOff(m: MachineDTO) {
     if (this.canTurnOff(m)) {
       m.shuttingDown = true;
-      console.log(`${m.name} se gasi...`);
+      console.log(`${m.name} is shouting down...`);
 
       const delay = 10000;
 
       setTimeout(() => {
         m.powerState = 'off';
         m.shuttingDown = false;
-        console.log(`${m.name} je sada ugašena.`);
+        console.log(`${m.name} is shotted down.`);
       }, delay);
     }
   }
@@ -119,7 +113,7 @@ import { MachineService, MachineDTO } from '../services/machine.service';
   restart(m: MachineDTO) {
     if (this.canRestart(m)) {
       m.restarting = true;
-      console.log(`${m.name} se restartuje...`);
+      console.log(`${m.name} is restarting...`);
 
       const totalDelay = 10000;
       const halfDelay = Math.floor(totalDelay / 2);
@@ -127,14 +121,14 @@ import { MachineService, MachineDTO } from '../services/machine.service';
      
       setTimeout(() => {
         m.powerState = 'off';
-        console.log(`${m.name} se trenutno gasi...`);
+        console.log(`${m.name} is shutting down...`);
       }, halfDelay);
 
       
       setTimeout(() => {
         m.powerState = 'on';
         m.restarting = false;
-        console.log(`${m.name} je restartovana i upaljena.`);
+        console.log(`${m.name} is restarted.`);
       }, totalDelay);
     }
   }
@@ -144,7 +138,7 @@ import { MachineService, MachineDTO } from '../services/machine.service';
     if (this.canDestroy(m)) {
       m.active = false;
       m.powerState = 'off';
-      console.log(`${m.name} je uništena.`);
+      console.log(`${m.name} is deleted.`);
     }
   }
 }

@@ -19,7 +19,7 @@ export class AddUserComponent {
 
   addUser(): void {
     if (!this.firstName || !this.lastName || !this.email || !this.permissions) {
-      this.errorMessage = 'Sva polja su obavezna!';
+      this.errorMessage = 'All fields are required!';
       return;
     }
 
@@ -40,7 +40,7 @@ export class AddUserComponent {
       next: () => this.router.navigate(['/management']),
       error: err => {
         console.error(err);
-        this.errorMessage = 'Greška pri čuvanju korisnika.';
+        this.errorMessage = 'Error saving user.';
       }
     });
   }
