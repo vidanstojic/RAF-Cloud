@@ -4,8 +4,7 @@
   align-items: center;
   min-height: 100vh;
   background: #f5f7fb;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-}
+  }
 
 .card {
   width: 320px;

@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main, .main-content, .container {
+  margin-top: 0; 
+}
+
+app-header {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #222;
+  letter-spacing: 0.5px;
+}
+
+app-header .logo-text {
+  font-size: 22px;
+  font-weight: 600;
+  color: #004aad;
+}

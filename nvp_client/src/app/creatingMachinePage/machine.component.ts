@@ -32,11 +32,11 @@ export class CreateMachineComponent {
     const user = JSON.parse(localStorage.getItem('loggedUser') || '{}');
     const dto: MachineDTO = {
       id: localStorage.getItem('loggedUser') ? undefined : -1,
-      powerState: 'off',      // ← NEW
+      powerState: 'off',
       name: this.machineForm.value.name,
       type: this.machineForm.value.type,
       description: this.machineForm.value.description,
-      createdBy: user.id          // ← NEW
+      createdBy: user.id
     };
 
     this.machineService.create(dto).subscribe({

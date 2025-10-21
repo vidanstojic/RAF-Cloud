@@ -30,7 +30,6 @@ export class MachineService {
 getMachinesByUser(userId: number): Observable<MachineDTO[]> {
   return this.http.get<MachineDTO[]>(`${this.api}/user/${userId}`);
 }
-  /* search */
   search(name?: string, type?: string, state?: string): Observable<MachineDTO[]> {
     let params = new HttpParams();
     if (name)   params = params.set('name', name);
@@ -51,7 +50,6 @@ getMachinesByUser(userId: number): Observable<MachineDTO[]> {
   return this.http.get<MachineDTO[]>(`${this.api}/user/${userId}/search`, { params });
 }
 
-  /* actions */
   start(id: number): Observable<void> {
     return this.http.put<void>(`${this.api}/${id}/start`, {}, { withCredentials: true });
   }
@@ -62,7 +60,6 @@ getMachinesByUser(userId: number): Observable<MachineDTO[]> {
     return this.http.put<void>(`${this.api}/${id}/restart`, {}, { withCredentials: true });
   }
 
-  /* delete */
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.api}/${id}`, { withCredentials: true });
   }

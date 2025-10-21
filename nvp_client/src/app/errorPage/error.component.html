@@ -1,4 +1,7 @@
 <div class="error-log-container">
+
+  <app-header></app-header>
+
   <h2>Error's history</h2>
 
   <table class="error-table">
@@ -8,7 +11,6 @@
         <th>Machine ID</th>
         <th>Operation</th>
         <th>Message</th>
-        <!-- <th>Created</th> -->
       </tr>
     </thead>
     <tbody>
@@ -17,7 +19,6 @@
         <td>{{ err.machineId }}</td>
         <td>{{ err.operation }}</td>
         <td>{{ err.message }}</td>
-        <!-- <td>{{ err.createdBy }}</td>    -->
       </tr>
     </tbody>
   </table>
