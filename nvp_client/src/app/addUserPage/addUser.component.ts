@@ -13,12 +13,13 @@ export class AddUserComponent {
   email     = '';
   permissions = '';          
   errorMessage = '';
+  password = ''
 
   constructor(private userService: UserService,
               private router: Router) {}
 
   addUser(): void {
-    if (!this.firstName || !this.lastName || !this.email || !this.permissions) {
+    if (!this.firstName || !this.lastName || !this.email || !this.permissions || !this.password) {
       this.errorMessage = 'Sva polja su obavezna!';
       return;
     }
@@ -33,7 +34,7 @@ export class AddUserComponent {
                      .map(p => p.trim())
                      .filter(p => p.length > 0),
       
-      password: 'changeme'
+      password: this.password
     };
 
     this.userService.create(dto).subscribe({
