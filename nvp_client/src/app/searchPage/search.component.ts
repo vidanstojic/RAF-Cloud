@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MachineService, MachineDTO } from '../services/machine.service';
+import { Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-search-machines',
@@ -13,7 +14,7 @@ import { MachineService, MachineDTO } from '../services/machine.service';
   qType = 'all';
   qState = 'all';
 
-  constructor(private machineService: MachineService) {}
+  constructor(private machineService: MachineService,  private router: Router) {}
 
   ngOnInit(): void {
     const user = JSON.parse(localStorage.getItem('loggedUser') || '{}');
@@ -140,5 +141,9 @@ import { MachineService, MachineDTO } from '../services/machine.service';
       m.powerState = 'off';
       console.log(`${m.name} is deleted.`);
     }
+  }
+
+  goToSchedule(m: MachineDTO): void {
+    this.router.navigate(['/schedule', m.id]);
   }
 }

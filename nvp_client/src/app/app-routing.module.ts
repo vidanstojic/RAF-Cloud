@@ -8,6 +8,7 @@ import { CreateMachineComponent } from './creatingMachinePage/machine.component'
 import { SearchComponent } from './searchPage/search.component';
 import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
 import { ErrorComponent } from './errorPage/error.component';
+import { ScheduleComponent } from './schedulerPage/schedule.component';
 const routes: Routes = [
   {
     path: "",
@@ -35,6 +36,10 @@ const routes: Routes = [
   },
   { path: 'error-log', component: ErrorComponent },
   { path: 'search-machines', component: SearchComponent },
+  {
+    path: 'schedule/:id',
+    component: ScheduleComponent
+  }
 
 
 ];

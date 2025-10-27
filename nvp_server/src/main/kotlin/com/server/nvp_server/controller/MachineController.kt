@@ -39,7 +39,7 @@ class MachineController(
 
     @PostMapping
     fun createMachine(@RequestBody dto: MachineDTO): MachineDTO {
-        val owner = userService.getUserById(dto.createdBy!!)   // ← use the id you receive
+        val owner = userService.getUserById(dto.createdBy!!)
         return MachineMapper.toDTO(
             machineService.createMachine(MachineMapper.toEntity(dto, owner!!), owner)
         )
@@ -53,6 +53,10 @@ class MachineController(
     ): List<MachineDTO> =
         machineService.searchUserMachines(userId, name, type, state)
             .map { MachineMapper.toDTO(it) }
+
+    @GetMapping("/{id}")
+    fun getMachineById(@PathVariable id: Long): MachineDTO =
+        MachineMapper.toDTO(machineService.getMachineById(id))
 
 //    @PutMapping("/{id}/start")
 //    fun startMachine(@PathVariable id: Long) = machineService.startMachine(id)

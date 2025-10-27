@@ -63,4 +63,18 @@ getMachinesByUser(userId: number): Observable<MachineDTO[]> {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.api}/${id}`, { withCredentials: true });
   }
+
+  scheduleOperation(id: number, operation: string, scheduledTime: string): Observable<void> {
+      const body = {
+        operation,
+        scheduledTime,
+      };
+      console.log("Scheduling operation with body:", body);
+      return this.http.post<void>(`${this.api}/${id}/schedule`, body);
+    }
+
+    getMachineById(id: number): Observable<MachineDTO> {
+    return this.http.get<MachineDTO>(`${this.api}/${id}`);
+  }
+
 }

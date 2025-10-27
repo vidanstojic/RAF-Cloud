@@ -1,0 +1,32 @@
+<div class="schedule-container">
+  <app-header></app-header>
+
+  <div class="schedule-card" *ngIf="machine">
+    <h2>Zakazivanje operacije za: <span>{{ machine.name }}</span></h2>
+
+    <form (ngSubmit)="scheduleOperation()" class="schedule-form">
+      <div class="form-row">
+        <label>Operacija:</label>
+        <select [(ngModel)]="operation" name="operation">
+          <option value="start">Pokreni</option>
+          <option value="stop">Zaustavi</option>
+          <option value="restart">Restartuj</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Datum i vreme:</label>
+        <input type="datetime-local" [(ngModel)]="scheduledTime" name="scheduledTime">
+      </div>
+
+      <div class="buttons-row">
+        <button type="submit" class="btn-zakazi">Zakaži</button>
+        <button type="button" (click)="cancel()" class="btn-reset">Otkaži</button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="!machine" class="loading">
+    Učitavanje podataka o mašini...
+  </div>
+</div>
