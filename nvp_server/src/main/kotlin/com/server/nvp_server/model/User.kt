@@ -22,11 +22,8 @@ data class User(
     var password: String, // TODO: Hash password before saving
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-        name = "user_permissions",
-        joinColumns = [JoinColumn(name = "user_id")]
-    )
-    @Column(name = "permission")
+    @CollectionTable(name = "user_permissions", joinColumns = [JoinColumn(name = "user_id")])
     @Enumerated(EnumType.STRING)
-    val permissions: MutableList<Permission> = mutableListOf()
+    @Column(name = "permission")
+    var permissions: MutableList<Permission> = mutableListOf()
 )

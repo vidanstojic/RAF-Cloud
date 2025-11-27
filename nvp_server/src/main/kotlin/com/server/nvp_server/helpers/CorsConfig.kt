@@ -1,9 +1,13 @@
 package com.server.nvp_server.helpers
 
-
+import org.springframework.web.filter.CorsFilter
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+
 
 @Configuration
 class CorsConfig : WebMvcConfigurer {
@@ -14,4 +18,17 @@ class CorsConfig : WebMvcConfigurer {
             .allowedHeaders("*")
             .allowCredentials(true)
     }
+}
+@Bean
+fun corsFilter(): CorsFilter {
+    val config = CorsConfiguration().apply {
+        allowCredentials = true
+        allowedOrigins = listOf("http://localhost:4200")
+        allowedHeaders = listOf("*")
+        allowedMethods = listOf("*")
+    }
+    val source = UrlBasedCorsConfigurationSource().apply {
+        registerCorsConfiguration("/**", config)
+    }
+    return CorsFilter(source)
 }

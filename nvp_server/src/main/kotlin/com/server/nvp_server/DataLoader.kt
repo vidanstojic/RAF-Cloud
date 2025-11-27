@@ -11,8 +11,25 @@ import org.springframework.stereotype.Component
 @Component
 class DataLoader(private val userRepository: UserRepository) : CommandLineRunner {
     override fun run(vararg args: String?) {
-//        val user = User(firstName = "Pera", lastName = "Stojicic", email = "peroslav@example.com", password = "pera123");
-//        userRepository.save(user)
-        println("Saved users: ${userRepository.findAll()}")
+        if (userRepository.count() == 0L) {
+            val admin = User(
+                firstName = "Admin",
+                lastName = "System",
+                email = "admin@raf.rs",
+                password = "admin123",
+                permissions = mutableListOf(
+                    Permission.READING_USER,
+                    Permission.CREATING_USER,
+                    Permission.UPDATE_USER,
+                    Permission.DELETING_USER,
+                    Permission.CREATE_MACHINE,
+                    Permission.DELETE_MACHINE,
+                    Permission.UPDATE_MACHINE,
+                    Permission.MACHINE_OPERATION
+                )
+            )
+            userRepository.save(admin)
+            println("Admin created with new permissions")
+        }
     }
 }
