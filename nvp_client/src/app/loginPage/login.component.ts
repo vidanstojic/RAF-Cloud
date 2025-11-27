@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService, User } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,10 +15,10 @@ export class LoginComponent implements OnInit {
   users: User[] = [];
   errorMessage: string = '';
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private authService: AuthService, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
-    this.loadUsers();
+    //this.loadUsers();
   }
 
   loadUsers() {
@@ -27,24 +28,17 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  login() {
-    this.errorMessage = '';
-
-    const userByEmail = this.users.find(u => u.email === this.email);
-
-    if (!userByEmail) {
-      this.errorMessage = 'Email does not exist!';
-      return;
+ login(): void {
+  console.log('🔍 Login URL:', `${this.authService.api}/loginuser`);
+  this.authService.login(this.email, this.password).subscribe({
+    next: res => {
+      localStorage.setItem('token', res.token);
+      this.router.navigate(['/home']);
+    },
+    error: err => {
+      console.error('❌ Login error:', err);
+      this.errorMessage = 'Invalid credentials';
     }
-
-    if (userByEmail.password !== this.password) {
-      this.errorMessage = 'Incorrect password!';
-      return;
-    }
-
-    localStorage.setItem('loggedUser', JSON.stringify(userByEmail));
-
-    console.log('Login successful', userByEmail);
-    this.router.navigate(['/home']);
-  }
+  });
+}
 }
