@@ -1,25 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MachineService, MachineDTO } from '../services/machine.service';
 import { Router } from '@angular/router'; 
+import { WebSocketService } from '../services/websocket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-search-machines',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
-})export class SearchComponent implements OnInit {
+})
+export class SearchComponent implements OnInit, OnDestroy {
   private currentUserId = 0;
   machines: MachineDTO[] = [];
   results: MachineDTO[] = [];
   qName = '';
   qType = 'all';
   qState = 'all';
+  private wsSubscription!: Subscription;
 
-  constructor(private machineService: MachineService,  private router: Router) {}
+  constructor(
+    private machineService: MachineService,  
+    private router: Router,
+    private webSocketService: WebSocketService
+  ) {}
 
   ngOnInit(): void {
     const user = JSON.parse(localStorage.getItem('loggedUser') || '{}');
     this.currentUserId = user?.id || -1;
     this.loadMyMachines();
+    this.subscribeToMachineStatus();
+  }
+
+  ngOnDestroy(): void {
+    if (this.wsSubscription) {
+      this.wsSubscription.unsubscribe();
+    }
   }
 
   private loadMyMachines(): void {
@@ -27,9 +42,14 @@ import { Router } from '@angular/router';
       .subscribe(list => {
         this.machines = list;
         this.results = list;
+        this.results.forEach(m => {
+          m.powerState = (m.state === 'ON' || m.state === 'RUNNING') ? 'on' : 'off';
+          m.starting = m.state === 'OCCUPIED' && m.powerState === 'off';
+          m.shuttingDown = m.state === 'OCCUPIED' && m.powerState === 'on';
+          m.restarting = false;
+        });
       });
   }
-
   search(): void {
     this.machineService.searchUserMachines(
       this.currentUserId,
@@ -43,54 +63,18 @@ import { Router } from '@angular/router';
     this.qName = '';
     this.qType = 'all';
     this.qState = 'all';
-    this.loadMyMachines();
   }
-
-    start(m: MachineDTO): void {
-    this.machineService.start(m.id!).subscribe(() => this.loadMyMachines());
-  }
-
-  stop(m: MachineDTO): void {
-    this.machineService.stop(m.id!).subscribe(() => this.loadMyMachines());
-  }
-
-  delete(m: MachineDTO): void {
-    this.machineService.delete(m.id!).subscribe(() => this.loadMyMachines());
-  }
-
-  canTurnOn(m: MachineDTO): boolean {
-
-    console.log("nestoooooo " + m.starting + " " + m.active +  " " + m.powerState);
-    return m.active === true && (m.powerState === 'off' || m.powerState === undefined) && (!m.starting || m.starting === undefined);
-  }
-
-  canTurnOff(m: MachineDTO): boolean {
-    return m.active === true && m.powerState === 'on' && m.starting === false;
-  }
-
-
-  canRestart(m: MachineDTO): boolean {
-    return m.active === true && m.powerState === 'on' && m.starting === false;
-  }
-
-
-  canDestroy(m: MachineDTO): boolean {
-    return m.active === true && m.powerState === 'off';
-  }
-
   turnOn(m: MachineDTO) {
+    console.log("Attempting to turn on " + m.name);
     if (this.canTurnOn(m)) {
-      m.starting = true;
-      console.log(`${m.name} is starting...`);
-
-      const delay = 10000;
-
-      setTimeout(() => {
-        m.powerState = 'on';
-        m.starting = false;
-        console.log(`${m.name} is turned on.`);
-      }, delay);
-    }else{
+      const command = {
+        type: 'START',
+        machineId: m.id!
+      };
+      this.webSocketService.sendMessage(command);
+      m.starting = true; 
+      console.log(`${m.name} is starting (WS command sent)...`);
+    } else {
       console.log("Can not be turned on " + m.name);
     }
   }
@@ -98,43 +82,28 @@ import { Router } from '@angular/router';
 
   turnOff(m: MachineDTO) {
     if (this.canTurnOff(m)) {
+      const command = {
+        type: 'STOP',
+        machineId: m.id!
+      };
+      this.webSocketService.sendMessage(command);
       m.shuttingDown = true;
-      console.log(`${m.name} is shouting down...`);
-
-      const delay = 10000;
-
-      setTimeout(() => {
-        m.powerState = 'off';
-        m.shuttingDown = false;
-        console.log(`${m.name} is shotted down.`);
-      }, delay);
+      console.log(`${m.name} is shutting down (WS command sent)...`);
     }
   }
 
   restart(m: MachineDTO) {
     if (this.canRestart(m)) {
+      const command = {
+        type: 'RESTART',
+        machineId: m.id!
+      };
+      this.webSocketService.sendMessage(command);
       m.restarting = true;
-      console.log(`${m.name} is restarting...`);
-
-      const totalDelay = 10000;
-      const halfDelay = Math.floor(totalDelay / 2);
-
-     
-      setTimeout(() => {
-        m.powerState = 'off';
-        console.log(`${m.name} is shutting down...`);
-      }, halfDelay);
-
-      
-      setTimeout(() => {
-        m.powerState = 'on';
-        m.restarting = false;
-        console.log(`${m.name} is restarted.`);
-      }, totalDelay);
+      console.log(`${m.name} is restarting (WS command sent)...`);
     }
   }
-
-
+  
   destroy(m: MachineDTO) {
     if (this.canDestroy(m)) {
       m.active = false;
@@ -143,7 +112,79 @@ import { Router } from '@angular/router';
     }
   }
 
+  canTurnOn(m: MachineDTO): boolean {
+    return m.active === true && m.powerState === 'off' && !m.starting && !m.restarting && !m.shuttingDown;
+  }
+
+  canTurnOff(m: MachineDTO): boolean {
+    return m.active === true && m.powerState === 'on' && !m.starting && !m.restarting && !m.shuttingDown;
+  }
+
+
+  canRestart(m: MachineDTO): boolean {
+    return m.active === true && m.powerState === 'on' && !m.starting && !m.restarting && !m.shuttingDown;
+  }
+
+
+  canDestroy(m: MachineDTO): boolean {
+    return m.active === true && m.powerState === 'off';
+  }
+
   goToSchedule(m: MachineDTO): void {
     this.router.navigate(['/schedule', m.id]);
   }
+  private subscribeToMachineStatus(): void {
+  this.wsSubscription = this.webSocketService.messages.subscribe(status => { 
+    const machineToUpdate = this.results.find(m => m.id === status.machineId); //
+
+    if (machineToUpdate) {
+      machineToUpdate.state = status.status; //
+      
+      switch (status.status) {
+        case '200':
+        case 'STARTING':
+        case 'SCHEDULED_START':
+          machineToUpdate.starting = true;
+          machineToUpdate.powerState = 'on';
+          break;
+        case 'RUNNING':
+        case 'ON':
+          machineToUpdate.restarting = false;
+          machineToUpdate.starting = false;
+          machineToUpdate.powerState = 'on'; //
+          break;
+
+        case '201':
+        case 'SHUTTING_DOWN':
+        case 'SCHEDULED_STOP':
+          machineToUpdate.shuttingDown = true;
+          machineToUpdate.powerState = 'on';
+          break;
+          
+        case 'OFF':
+        case 'STOPPED':
+          machineToUpdate.shuttingDown = false;
+          machineToUpdate.powerState = 'off'; //
+          break;
+
+        case '202':
+        case 'RESTARTING':
+        case 'SCHEDULED_RESTART':
+          machineToUpdate.restarting = true;
+          machineToUpdate.powerState = 'off';
+          break;
+          
+        case '404':
+          console.error(`Mašina ID ${status.machineId} nije pronađena.`);
+          break;
+          
+        default:
+          console.log(`Nepoznati status: ${status.status}`);
+          break;
+      }
+      
+      console.log(`Status update for ${machineToUpdate.name}: ${status.status}`); //
+    }
+  });
+}
 }
