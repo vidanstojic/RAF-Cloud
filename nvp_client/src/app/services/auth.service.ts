@@ -4,11 +4,14 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  public readonly api = '/api/users'; // login je unutar /users
+  private api = '/api/users';
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.api}/loginuser`, { email, password });
+  login(email: string, pass: string): Observable<{ token: string }> {
+    return this.http.post<{ token: string }>(
+      `${this.api}/loginuser`,
+      { email, password: pass }
+    );
   }
 }

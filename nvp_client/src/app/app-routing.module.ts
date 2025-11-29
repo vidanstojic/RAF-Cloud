@@ -1,51 +1,75 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {LoginComponent} from "./loginPage/login.component";
-import {HomeComponent} from "./homePage/home.component";
-import {ManagementComponent} from "./managementPage/management.component";
-import {AddUserComponent} from "./addUserPage/addUser.component";
+
+/* komponente */
+import { LoginComponent } from './loginPage/login.component';
+import { HomeComponent } from './homePage/home.component';
+import { ManagementComponent } from './managementPage/management.component';
+import { AddUserComponent } from './addUserPage/addUser.component';
 import { CreateMachineComponent } from './creatingMachinePage/machine.component';
 import { SearchComponent } from './searchPage/search.component';
 import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
 import { ErrorComponent } from './errorPage/error.component';
 import { ScheduleComponent } from './schedulerPage/schedule.component';
+
+/* guard */
+import { AuthGuard } from './services/auth-guard.service'
+
 const routes: Routes = [
+  /* podrazumevana ruta – login stranica */
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+
+  /* javno dostupno */
+  { path: 'login', component: LoginComponent },
+
+  /* zaštićene stranice (samo ulogovani) */
   {
-    path: "",
-    component: LoginComponent
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [AuthGuard]
   },
   {
-    path: "home",
-    component: HomeComponent
+    path: 'management',
+    component: ManagementComponent,
+    canActivate: [AuthGuard]
   },
-  { path: 'management',
-    component: ManagementComponent },
-  { path: 'add-user',
-    component: AddUserComponent
+  {
+    path: 'add-user',
+    component: AddUserComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'create-machine',
-    component: CreateMachineComponent
+    component: CreateMachineComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'search-machines',
-    component: SearchComponent
+    component: SearchComponent,
+    canActivate: [AuthGuard]
   },
   {
-     path: 'edit-user/:id', component: EditUserComponent
+    path: 'edit-user/:id',
+    component: EditUserComponent,
+    canActivate: [AuthGuard]
   },
-  { path: 'error-log', component: ErrorComponent },
-  { path: 'search-machines', component: SearchComponent },
+  {
+    path: 'error-log',
+    component: ErrorComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: 'schedule/:id',
-    component: ScheduleComponent
-  }
+    component: ScheduleComponent,
+    canActivate: [AuthGuard]
+  },
 
-
+  /* 404 – vrati na login */
+  { path: '**', redirectTo: '/login' }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
