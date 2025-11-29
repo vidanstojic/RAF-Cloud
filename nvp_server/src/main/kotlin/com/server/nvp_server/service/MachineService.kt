@@ -8,6 +8,8 @@ import com.server.nvp_server.model.User
 import com.server.nvp_server.repository.ErrorLogRepository
 import com.server.nvp_server.repository.MachineRepository
 import com.server.nvp_server.repository.SchedulerRepository
+import com.server.nvp_server.websocket.dto.MachineStatusMessage
+import com.server.nvp_server.websocket.publisher.MachineStatusPublisher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,7 +21,8 @@ import java.time.LocalDateTime
 class MachineService(
     private val machineRepository: MachineRepository,
     private val errorRepository: ErrorLogRepository,
-    private val schedulerRepository: SchedulerRepository
+    private val schedulerRepository: SchedulerRepository,
+    private val machineStatusPublisher: MachineStatusPublisher
 ) {
 
     val startedMachines = HashSet<Machine>()
@@ -48,74 +51,96 @@ class MachineService(
     }
 
     fun startMachine(id: Long){
+
         val machine = getMachineById(id)
-        if (restartedMachines.contains(machine) == true || startedMachines.contains(machine) == true){
-            val error = ErrorLog(0,"CAN NOT START", machine, "START", LocalDateTime.now())
-            errorRepository.save(error)
-        }else {
-            machine.state = MachineState.OCCUPIED
-            GlobalScope.launch {
-                delay(10_000)
-                machine.state = MachineState.ON
-//                println("${m.name} is turned on.")
-            }
-            startedMachines.add(machine)
+
+
+        GlobalScope.launch {
+            delay(10_000)
+
+            machine.state = MachineState.ON
+            machineRepository.save(machine)
+
+            val runningMsg = MachineStatusMessage(
+                machineId = machine.id,
+                status = "RUNNING", // KONTROLNA PORUKA!
+                progress = 100
+            )
+            machineStatusPublisher.sendStatusUpdate(runningMsg)
+            println("POSLATO: RUNNING status nakon 10 sekundi za mašinu ${machine.name}")
         }
     }
 
-    fun restartMachine(id: Long){
-        val machine = getMachineById(id)
-        startedMachines.remove(machine)
-        if (restartedMachines.contains(machine) == true || startedMachines.contains(machine) == true){
-            val error = ErrorLog(0,"CAN NOT START", machine, "START", LocalDateTime.now())
-            errorRepository.save(error)
-        }else {
-            restartedMachines.add(machine)
-            machine.state = MachineState.OCCUPIED
-            val totalDelay = 10_000L
-            val halfDelay = totalDelay / 2
+    fun stopMachine(id: Long) {
+        val machine = machineRepository.findById(id).orElseThrow {
+            RuntimeException("Mašina ID $id nije pronađena")
+        }
 
-            GlobalScope.launch {
-                delay(halfDelay)
-                machine.state = MachineState.OFF
-//                println("${m.name} is shutting down...")
+        machine.state = MachineState.OCCUPIED
+        machineRepository.save(machine)
 
-                delay(halfDelay)
-                machine.state = MachineState.ON
-//                println("${m.name} is restarted.")
-            }
-            restartedMachines.remove(machine)
-            startedMachines.add(machine)
+        GlobalScope.launch {
+            println("Zaustavljanje mašine ${machine.name}. Čekanje 10 sekundi...")
+            delay(10_000)
+
+            machine.state = MachineState.OFF
+            machineRepository.save(machine)
+
+            val statusMessage = MachineStatusMessage(
+                machineId = id,
+                status = "STOPPED",
+                progress = 100
+            )
+            machineStatusPublisher.sendStatusUpdate(statusMessage)
+            println("POSLATO: STOPPED status nakon 10 sekundi za mašinu ${machine.name}")
         }
     }
 
-    fun stopMachine(id: Long){
-        val machine = getMachineById(id)
-        if (restartedMachines.contains(machine) == true || startedMachines.contains(machine) != true){
-            val error = ErrorLog(0,"CAN NOT START", machine, "START", LocalDateTime.now())
-            errorRepository.save(error)
-        }else {
-            machine.state = MachineState.OCCUPIED
-            GlobalScope.launch {
-                delay(10_000)
-                machine.state = MachineState.OFF
-//                println("${m.name} is turned on.")
-            }
-            startedMachines.remove(machine)
+    fun restartMachine(id: Long) {
+        val machine = machineRepository.findById(id).orElseThrow {
+            RuntimeException("Mašina ID $id nije pronađena")
+        }
+        machine.state = MachineState.OCCUPIED
+        val totalDelay = 10_000L
+        val halfDelay = totalDelay / 2
+
+        GlobalScope.launch {
+            println("Restartovanje mašine ${machine.name}. Čekanje 10 sekundi...")
+            delay(halfDelay)
+            machine.state = MachineState.OFF
+            delay(halfDelay)
+            machine.state = MachineState.ON
+            val statusMessage = MachineStatusMessage(
+                machineId = id,
+                status = "RUNNING",
+                progress = 100
+            )
+            machineStatusPublisher.sendStatusUpdate(statusMessage)
+            println("POSLATO: RUNNING status nakon 10 sekundi za mašinu ${machine.name}")
         }
     }
-
 
     @Scheduled(fixedRate = 3000)
     fun checkOperations() {
-        val scheduled = schedulerRepository.findAllByScheduledTimeBetween(LocalDateTime.now(), LocalDateTime.now().plusDays(1) )
-        for (scheduler in scheduled ){
-            if (scheduler.operation.equals("START"))
+        val scheduled = schedulerRepository.findAllByScheduledTimeBetween(LocalDateTime.now().minusMinutes(1), LocalDateTime.now())
+
+        for (scheduler in scheduled) {
+            val statusMessage = MachineStatusMessage(
+                machineId = scheduler.machine.id,
+                status = "SCHEDULED_${scheduler.operation}",
+                progress = 0
+            )
+            println(statusMessage)
+            machineStatusPublisher.sendStatusUpdate(statusMessage)
+
+            if (scheduler.operation.equals("start"))
                 startMachine(scheduler.machine.id)
-            else if (scheduler.operation.equals("STOP"))
+            else if (scheduler.operation.equals("stop"))
                 stopMachine(scheduler.machine.id)
-            else if (scheduler.operation.equals("RESTART"))
+            else if (scheduler.operation.equals("restart"))
                 restartMachine(scheduler.machine.id)
+
+            schedulerRepository.delete(scheduler)
         }
     }
 
