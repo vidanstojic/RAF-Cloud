@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService, User } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -8,37 +7,36 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
+  email = '';
+  password = '';
+  errorMessage = '';
 
-  email: string = '';
-  password: string = '';
-  users: User[] = [];
-  errorMessage: string = '';
+  constructor(private authService: AuthService,
+              private router: Router) {}
 
-  constructor(private authService: AuthService, private userService: UserService, private router: Router) { }
-
-  ngOnInit(): void {
-    //this.loadUsers();
-  }
-
-  loadUsers() {
-    this.userService.getAll().subscribe({
-      next: (data) => this.users = data,
-      error: (err) => console.error(err)
+  login(): void {
+    this.authService.login(this.email, this.password).subscribe({
+      next: res => {
+        this.storeTokenWithExpiry(res.token, 120);      // 120 min
+        this.router.navigate(['/home']);
+      },
+      error: err => {
+        console.error(err);
+        this.errorMessage = 'Invalid credentials';
+        localStorage.clear();
+      }
     });
   }
 
- login(): void {
-  console.log('🔍 Login URL:', `${this.authService.api}/loginuser`);
-  this.authService.login(this.email, this.password).subscribe({
-    next: res => {
-      localStorage.setItem('token', res.token);
-      this.router.navigate(['/home']);
-    },
-    error: err => {
-      console.error('❌ Login error:', err);
-      this.errorMessage = 'Invalid credentials';
-    }
-  });
-}
+  /* pomoćna – čuva i token i lokalni exp */
+  private storeTokenWithExpiry(jwt: string, minutes: number): void {
+    const payload = JSON.parse(atob(jwt.split('.')[1]));
+    const jwtExp  = payload.exp * 1000;                 // JWT vlastito exp
+    const ourExp  = Date.now() + minutes * 60_000;      // naš „lokalni“ exp
+    const finalExp = Math.min(jwtExp, ourExp);          // ne duže od JWT-a
+
+    localStorage.setItem('token', jwt);
+    localStorage.setItem('token_exp', finalExp.toString());
+  }
 }
