@@ -17,7 +17,7 @@ data class ErrorLog(
     var machine: Machine,
 
     @Column(nullable = false)
-    var operation: String, // "START", "STOP", "RESTART"
+    var operation: String,
 
     @Column(nullable = false)
     var timestamp: LocalDateTime = LocalDateTime.now()
