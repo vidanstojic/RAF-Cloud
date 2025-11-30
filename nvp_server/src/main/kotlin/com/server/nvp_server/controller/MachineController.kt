@@ -58,14 +58,14 @@ class MachineController(
     fun getMachineById(@PathVariable id: Long): MachineDTO =
         MachineMapper.toDTO(machineService.getMachineById(id))
 
-//    @PutMapping("/{id}/start")
-//    fun startMachine(@PathVariable id: Long) = machineService.startMachine(id)
-//
-//    @PutMapping("/{id}/stop")
-//    fun stopMachine(@PathVariable id: Long) = machineService.stopMachine(id)
-//
-//    @PutMapping("/{id}/restart")
-//    fun restartMachine(@PathVariable id: Long) = machineService.restartMachine(id)
+    @PutMapping("/{id}/start")
+    fun startMachine(@PathVariable id: Long) = machineService.startMachine(id)
+
+    @PutMapping("/{id}/stop")
+    fun stopMachine(@PathVariable id: Long) = machineService.stopMachine(id)
+
+    @PutMapping("/{id}/restart")
+    fun restartMachine(@PathVariable id: Long) = machineService.restartMachine(id)
 
     @DeleteMapping("/{id}")
     fun deleteMachine(@PathVariable id: Long) = machineService.deleteMachine(id)
