@@ -3,6 +3,7 @@ import { MachineService, MachineDTO } from '../services/machine.service';
 import { Router } from '@angular/router'; 
 import { WebSocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-search-machines',
@@ -21,7 +22,8 @@ export class SearchComponent implements OnInit, OnDestroy {
   constructor(
     private machineService: MachineService,  
     private router: Router,
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    public  auth: AuthService 
   ) {}
 
   ngOnInit(): void {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service'; 
 
 export interface User {
   id?: number;
@@ -11,22 +11,25 @@ export interface User {
   password?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UserService {
-  private readonly api = '/api/users';   
+  private api = '/api/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private auth: AuthService) {}
 
   getAll(): Observable<User[]> {
-    return this.http.get<User[]>(this.api);
+    return this.auth.get<User[]>(this.api);
   }
 
   create(user: User): Observable<User> {
-    return this.http.post<User>(this.api, user);
+    return this.auth.post<User>(this.api, user);
   }
+
   update(id: number, user: User): Observable<User> {
-    return this.http.put<User>(`${this.api}/${id}`, user);
+    return this.auth.put<User>(`${this.api}/${id}`, user);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.auth.delete<void>(`${this.api}/${id}`);
   }
 }

@@ -57,14 +57,31 @@
           <td>{{ m.state }}</td>
           <td>{{ m.active ? 'Yes' : 'No' }}</td>
           <td>{{ m.description }}</td>
-          <td class="actions">
-             <td>
-            <button (click)="turnOn(m)" [disabled]="!canTurnOn(m)" class="btn-upali">Upali</button>
-            <button (click)="turnOff(m)" [disabled]="!canTurnOff(m)" class="btn-ugasi">Ugasi</button>
-            <button (click)="restart(m)" [disabled]="!canRestart(m)" class="btn-restart">Restartuj</button>
-            <button (click)="destroy(m)" [disabled]="!canDestroy(m)" class="btn-unisti">Uništi</button>
-            <button (click)="goToSchedule(m)" class="btn-zakazi">Zakaži</button>
-          </td>
+    <td class="actions">
+  <button (click)="turnOn(m)"
+          *ngIf="auth.hasPermission('STARTING_MACHINE')"
+          [disabled]="!canTurnOn(m)"
+          class="btn-upali">Upali</button>
+
+  <button (click)="turnOff(m)"
+          *ngIf="auth.hasPermission('STOPPING_MACHINE')"
+          [disabled]="!canTurnOff(m)"
+          class="btn-ugasi">Ugasi</button>
+
+  <button (click)="restart(m)"
+          *ngIf="auth.hasPermission('RESTARTING_MACHINE')"
+          [disabled]="!canRestart(m)"
+          class="btn-restart">Restartuj</button>
+
+  <button (click)="destroy(m)"
+          *ngIf="auth.hasPermission('DESTROYING_MACHINE')"
+          [disabled]="!canDestroy(m)"
+          class="btn-unisti">Uništi</button>
+
+  <button (click)="goToSchedule(m)"
+          *ngIf="auth.hasPermission('SCHEDULING_MACHINE')"
+          class="btn-zakazi">Zakaži</button>
+</td>
         </tr>
       </tbody>
     </table>

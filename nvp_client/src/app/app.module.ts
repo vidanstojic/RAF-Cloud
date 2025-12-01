@@ -17,6 +17,7 @@ import { SearchComponent } from './searchPage/search.component'
 import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ScheduleComponent } from './schedulerPage/schedule.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,7 @@ import { ScheduleComponent } from './schedulerPage/schedule.component';
     ErrorComponent,
     EditUserComponent,
     HeaderComponent,
-    ScheduleComponent
+    ScheduleComponent,
   ],
   imports: [
     BrowserModule,
