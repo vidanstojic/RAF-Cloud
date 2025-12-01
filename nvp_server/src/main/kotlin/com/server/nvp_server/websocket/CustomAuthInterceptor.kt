@@ -1,6 +1,6 @@
 package com.server.nvp_server.websocket
 
-import com.server.nvp_server.helpers.JwtUtil // Import vašeg utility-ja
+import com.server.nvp_server.helpers.JwtUtil // Import ostaje isti
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
@@ -16,7 +16,9 @@ class CustomUserPrincipal(private val email: String) : Principal {
 }
 
 @Component
-class CustomAuthInterceptor : HandshakeInterceptor {
+class CustomAuthInterceptor(
+    private val jwtUtil: JwtUtil // <--- PROMENA 1: Injektujemo instancu servisa
+) : HandshakeInterceptor {
 
     override fun beforeHandshake(
         request: ServerHttpRequest,
@@ -24,7 +26,7 @@ class CustomAuthInterceptor : HandshakeInterceptor {
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>
     ): Boolean {
-        // 1. Ekstrakcija tokena iz URL-a (npr. ?token=ey...)
+        // 1. Ekstrakcija tokena iz URL-a
         val uri: URI = request.uri
         val query = uri.query
 
@@ -33,23 +35,19 @@ class CustomAuthInterceptor : HandshakeInterceptor {
             ?.find { it.size == 2 && it[0] == "token" }
             ?.get(1)
 
-        // Ako nema tokena, odbij pristup
         if (token.isNullOrEmpty()) {
             println("❌ WS: Token nije prosleđen.")
             response.setStatusCode(HttpStatus.UNAUTHORIZED)
             return false
         }
 
-        // 2. Validacija tokena koristeći vaš JwtUtil
-        // Ovo menja Spring Security validaciju vašom custom logikom
+        // 2. Validacija tokena koristeći injektovanu instancu
         return try {
-            if (JwtUtil.isTokenValid(token)) {
-                val email = JwtUtil.extractEmail(token)
+            // PROMENA 2: Koristimo 'jwtUtil' (instancu), a ne 'JwtUtil' (klasu)
+            if (jwtUtil.isTokenValid(token)) {
+                val email = jwtUtil.extractEmail(token) // <--- I ovde mala slova
 
-                // Kreiramo naš Principal objekat
                 val principal = CustomUserPrincipal(email)
-
-                // Čuvamo korisnika u sesiji
                 attributes["user"] = principal
 
                 println("✅ WS: Konekcija odobrena za: $email")

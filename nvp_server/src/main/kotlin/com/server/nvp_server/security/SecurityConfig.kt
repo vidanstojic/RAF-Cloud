@@ -13,6 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.http.HttpMethod
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
@@ -22,6 +24,8 @@ import org.springframework.web.filter.CorsFilter
 class SecurityConfig(
     private val jwtFilter: JwtAuthenticationFilter
 ) {
+    @Bean
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
@@ -41,6 +45,7 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it.requestMatchers(HttpMethod.POST, "/api/users/loginuser").permitAll()
                 it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                it.requestMatchers("/ws/**").permitAll()
                 /* dozvole po potrebi */
                 it.requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("READING_USER")
                 it.requestMatchers(HttpMethod.POST, "/api/machines").hasAuthority("CREATING_MACHINE")
