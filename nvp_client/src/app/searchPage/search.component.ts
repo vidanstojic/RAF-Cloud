@@ -3,6 +3,7 @@ import { MachineService, MachineDTO } from '../services/machine.service';
 import { Router } from '@angular/router'; 
 import { WebSocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-search-machines',
@@ -21,7 +22,8 @@ export class SearchComponent implements OnInit, OnDestroy {
   constructor(
     private machineService: MachineService,  
     private router: Router,
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -176,6 +178,11 @@ export class SearchComponent implements OnInit, OnDestroy {
           
         case '404':
           console.error(`Mašina ID ${status.machineId} nije pronađena.`);
+          this.snackBar.open(
+            "404 – Došlo je do greške pri izvršavanju operacije.",
+            "Zatvori",
+            { duration: 4000 }
+          );
           break;
           
         default:

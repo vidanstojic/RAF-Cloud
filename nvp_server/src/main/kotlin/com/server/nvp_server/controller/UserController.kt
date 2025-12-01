@@ -7,6 +7,7 @@ import com.server.nvp_server.helpers.RequiresPermission
 import com.server.nvp_server.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,16 +20,16 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/users")
-class UserController(private val userService: UserService) {
+class UserController(private val userService: UserService, private val passwordEncoder: PasswordEncoder) {
 
 
     @PostMapping("/loginuser")
     fun login(@RequestBody req: LoginRequest): LoginResponse {
         println("🔍 Login attempt: ${req.email}")
+
         val user = userService.findUserByEmail(req.email)
             ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found")
-
-        if (user.orElseThrow().password != req.password) {
+        if (!passwordEncoder.matches(req.password, user.orElseThrow().password)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credentials")
         }
 

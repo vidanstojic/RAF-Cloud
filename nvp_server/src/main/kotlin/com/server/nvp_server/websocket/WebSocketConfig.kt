@@ -9,12 +9,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 class WebSocketConfig(
     private val machineWebSocketHandler: MachineWebSocketHandler,
-//    private val authInterceptor: WebSocketAuthInterceptor
+    private val customAuthInterceptor: CustomAuthInterceptor
 ) : WebSocketConfigurer {
 
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
         registry.addHandler(machineWebSocketHandler, "/ws/machines")
-//            .addInterceptors(authInterceptor)
+            .addInterceptors(customAuthInterceptor)
             .setAllowedOrigins("*")
     }
 }
