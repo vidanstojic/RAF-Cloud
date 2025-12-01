@@ -180,11 +180,7 @@ export class SearchComponent implements OnInit, OnDestroy {
           
         case '404':
           console.error(`Mašina ID ${status.machineId} nije pronađena.`);
-          this.snackBar.open(
-            "404 – Došlo je do greške pri izvršavanju operacije.",
-            "Zatvori",
-            { duration: 4000 }
-          );
+          alert(`Operacija '${status.operation}' nije uspešno zakazana za ${status.machineId}.`);
           break;
           
         default:
