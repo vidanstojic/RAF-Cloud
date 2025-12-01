@@ -32,61 +32,55 @@ class UserController(
 
     @PostMapping("/loginuser")
     fun login(@RequestBody req: LoginRequest): LoginResponse {
-        println("🔍 Login attempt: ${req.email}")
-
         val user = userService.findUserByEmail(req.email)
             ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found")
+
         if (!passwordEncoder.matches(req.password, user.orElseThrow().password)) {
-            val user = userService.findUserByEmail(req.email)
-                ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found")
-
-            if (user.orElseThrow().password != req.password)
-                throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credentials")
-
-            val perms = user.orElseThrow().permissions?.map { it.name } ?: emptyList()
-
-            /* koristite JwtUtil da generišete token SA authorities */
-            val token = jwtUtil.generateToken(user.orElseThrow().email, perms)
-
-            return LoginResponse(token, perms)
-        }
-        data class LoginRequest(val email: String, val password: String)
-        data class LoginResponse(val token: String, val permissions: List<String>)
-
-
-        @RequiresPermission("READING_USER")
-        @GetMapping
-        fun getAllUsers(request: HttpServletRequest): List<UserDTO> {
-            println(">>> Authorization: ${request.getHeader("Authorization")}")
-            println(">>> Principal: ${SecurityContextHolder.getContext().authentication}")
-            return userService.getAllUsers().map { UserMapper.toDTO(it) }
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credentials")
         }
 
-        @RequiresPermission("READING_USER")
-        @GetMapping("/{id}")
-        fun getUser(@PathVariable id: Long): UserDTO =
-            UserMapper.toDTO(userService.getUserById(id)!!)
+        val perms = user.orElseThrow().permissions?.map { it.name } ?: emptyList()
 
-        @RequiresPermission("CREATING_USER")
-        @PostMapping
-        fun createUser(@RequestBody dto: UserDTO): UserDTO =
-            UserMapper.toDTO(userService.createUser(UserMapper.toEntity(dto)))
+        /* koristite JwtUtil da generišete token SA authorities */
+        val token = jwtUtil.generateToken(user.orElseThrow().email, perms)
 
-        @RequiresPermission("DELETING_USER")
-        @DeleteMapping("/{id}")
-        fun deleteUser(@PathVariable id: Long) {
-            userService.deleteUser(id)
-        }
-
-        @RequiresPermission("UPDATE_USER")
-        @PutMapping("/{id}")
-        fun updateUser(@PathVariable id: Long, @RequestBody dto: UserDTO): ResponseEntity<UserDTO> =
-            try {
-                ResponseEntity.ok(UserMapper.toDTO(userService.updateUser(id, dto)))
-            } catch (ex: NoSuchElementException) {
-                ResponseEntity.notFound().build()
-            } catch (ex: IllegalArgumentException) {
-                ResponseEntity.badRequest().build()
-            }
+        return LoginResponse(token, perms)
     }
+    data class LoginRequest(val email: String, val password: String)
+    data class LoginResponse(val token: String,val permissions: List<String>)
+
+    @RequiresPermission("READING_USER")
+    @GetMapping
+    fun getAllUsers(request: HttpServletRequest): List<UserDTO> {
+        println(">>> Authorization: ${request.getHeader("Authorization")}")
+        println(">>> Principal: ${SecurityContextHolder.getContext().authentication}")
+        return userService.getAllUsers().map { UserMapper.toDTO(it) }
+    }
+
+    @RequiresPermission("READING_USER")
+    @GetMapping("/{id}")
+    fun getUser(@PathVariable id: Long): UserDTO =
+        UserMapper.toDTO(userService.getUserById(id)!!)
+
+    @RequiresPermission("CREATING_USER")
+    @PostMapping
+    fun createUser(@RequestBody dto: UserDTO): UserDTO =
+        UserMapper.toDTO(userService.createUser(UserMapper.toEntity(dto)))
+
+    @RequiresPermission("DELETING_USER")
+    @DeleteMapping("/{id}")
+    fun deleteUser(@PathVariable id: Long) {
+        userService.deleteUser(id)
+    }
+
+    @RequiresPermission("UPDATE_USER")
+    @PutMapping("/{id}")
+    fun updateUser(@PathVariable id: Long, @RequestBody dto: UserDTO): ResponseEntity<UserDTO> =
+        try {
+            ResponseEntity.ok(UserMapper.toDTO(userService.updateUser(id, dto)))
+        } catch (ex: NoSuchElementException) {
+            ResponseEntity.notFound().build()
+        } catch (ex: IllegalArgumentException) {
+            ResponseEntity.badRequest().build()
+        }
 }
