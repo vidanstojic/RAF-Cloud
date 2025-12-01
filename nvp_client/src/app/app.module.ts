@@ -18,6 +18,7 @@ import { EditUserComponent } from './editUserPage/edit-user/edit-user.component'
 import { HeaderComponent } from './components/header/header.component';
 import { ScheduleComponent } from './schedulerPage/schedule.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     ErrorComponent,
     EditUserComponent,
     HeaderComponent,
-    ScheduleComponent
+    ScheduleComponent,
   ],
   imports: [
     BrowserModule,

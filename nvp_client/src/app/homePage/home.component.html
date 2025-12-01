@@ -1,44 +1,51 @@
 <div class="home-container">
-
   <app-header></app-header>
 
   <main class="main-content">
     <div class="container">
       <div class="card-column">
-        <div class="card user-management-card" routerLink="/management">
-        <div class="image-container">
-          <img src="assets/user-management.png" alt="User Management">
-          <div class="overlay">
-            <span>User Management</span>
+
+        <!-- User Management – READING_USER -->
+        <div class="card user-management-card"
+             routerLink="/management"
+             *ngIf="auth.hasPermission('READING_USER')">
+          <div class="image-container">
+            <img src="assets/user-management.png" alt="User Management">
+            <div class="overlay"><span>User Management</span></div>
           </div>
         </div>
-      </div>
-      <div class="card user-management-card" routerLink="/search-machines">
-        <div class="image-container">
-          <img src="assets/search.png" alt="Search Machines">
-          <div class="overlay">
-            <span>Search Machines</span>
+
+        <!-- Search Machines – READING_MACHINE -->
+        <div class="card user-management-card"
+             routerLink="/search-machines"
+             *ngIf="auth.hasPermission('READING_MACHINE')">
+          <div class="image-container">
+            <img src="assets/search.png" alt="Search Machines">
+            <div class="overlay"><span>Search Machines</span></div>
           </div>
         </div>
-      </div>
-      <div class="card user-management-card" routerLink="/create-machine">
-        <div class="image-container">
-          <img src="assets/create.png" alt="Create Machines">
-          <div class="overlay">
-            <span>Create Machine</span>
+
+        <!-- Create Machine – CREATING_MACHINE -->
+        <div class="card user-management-card"
+             routerLink="/create-machine"
+             *ngIf="auth.hasPermission('CREATING_MACHINE')">
+          <div class="image-container">
+            <img src="assets/create.png" alt="Create Machines">
+            <div class="overlay"><span>Create Machine</span></div>
           </div>
         </div>
-      </div>
-      <div class="card user-management-card" routerLink="/error-log">
-        <div class="image-container">
-          <img src="assets/error.png" alt="Error Log">
-          <div class="overlay">
-            <span>Error Log</span>
+
+        <!-- Error Log – READING_ERROR -->
+        <div class="card user-management-card"
+             routerLink="/error-log"
+             *ngIf="auth.hasPermission('READING_ERROR')">
+          <div class="image-container">
+            <img src="assets/error.png" alt="Error Log">
+            <div class="overlay"><span>Error Log</span></div>
           </div>
         </div>
-      </div>
+
       </div>
     </div>
   </main>
-
 </div>

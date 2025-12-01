@@ -1,6 +1,7 @@
 package com.server.nvp_server.service
 
 
+import MachineDTO
 import com.server.nvp_server.model.ErrorLog
 import com.server.nvp_server.model.Machine
 import com.server.nvp_server.model.MachineState
@@ -24,10 +25,22 @@ class MachineService(
     private val schedulerRepository: SchedulerRepository,
     private val machineStatusPublisher: MachineStatusPublisher
 ) {
-
     fun createMachine(machine: Machine, creator: User): Machine {
         machine.createdBy = creator
         machine.state = MachineState.OFF
+        return machineRepository.save(machine)
+    }
+
+    fun createMachine(dto: MachineDTO, owner: User): Machine {
+        val machine = Machine(
+            name = dto.name,
+            type = dto.type,
+            description = dto.description,
+            createdBy = owner,
+            active = true,
+            state = MachineState.OFF,
+            uniqueId = dto.uniqueId.toString()
+        )
         return machineRepository.save(machine)
     }
 

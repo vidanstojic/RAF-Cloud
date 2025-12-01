@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService, User } from '../services/user.service';   
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-management',
@@ -10,8 +11,11 @@ import { UserService, User } from '../services/user.service';
 export class ManagementComponent implements OnInit {
   users: User[] = [];          
 
-  constructor(private userService: UserService,
-              private router: Router) {}
+   constructor(
+    private userService: UserService,
+    public  auth: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();          
