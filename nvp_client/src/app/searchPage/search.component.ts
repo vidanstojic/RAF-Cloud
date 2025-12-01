@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { WebSocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-search-machines',
@@ -23,7 +24,8 @@ export class SearchComponent implements OnInit, OnDestroy {
     private machineService: MachineService,  
     private router: Router,
     private webSocketService: WebSocketService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public  auth: AuthService 
   ) {}
 
   ngOnInit(): void {

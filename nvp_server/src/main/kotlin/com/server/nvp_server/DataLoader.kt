@@ -13,21 +13,20 @@ import org.springframework.stereotype.Component
 class DataLoader(private val userRepository: UserRepository,
                  private val userService: UserService) : CommandLineRunner {
     override fun run(vararg args: String?) {
-        if (userRepository.count() == 0L) {
+        if (userRepository.count() == 1L) {
             val admin = User(
-                firstName = "Admin",
-                lastName = "System",
-                email = "admin@raf.rs",
+                firstName = "NijeAdmin",
+                lastName = "Ne",
+                email = "nijeadmin@raf.rs",
                 password = "admin123",
                 permissions = mutableListOf(
-                    Permission.READING_USER,
-                    Permission.CREATING_USER,
+                    //Permission.READING_USER,
+                   // Permission.CREATING_USER,
                     Permission.UPDATE_USER,
                     Permission.DELETING_USER,
-                    Permission.CREATE_MACHINE,
+                  //  Permission.CREATE_MACHINE,
                     Permission.DELETE_MACHINE,
                     Permission.UPDATE_MACHINE,
-                    Permission.MACHINE_OPERATION
                 )
             )
             userService.createUser(admin)

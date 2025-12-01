@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 type PowerState = 'on' | 'off';
 
@@ -22,59 +23,59 @@ export interface MachineDTO {
 export class MachineService {
   private readonly api = '/api/machines';
 
-  constructor(private http: HttpClient) {}
+  constructor(private auth: AuthService) {}
 
+  /* osnovni CRUD – koristeći AuthService helpers */
   create(dto: MachineDTO): Observable<MachineDTO> {
-  return this.http.post<MachineDTO>(this.api, dto, { withCredentials: true });
-}
-getMachinesByUser(userId: number): Observable<MachineDTO[]> {
-  return this.http.get<MachineDTO[]>(`${this.api}/user/${userId}`);
-}
+    return this.auth.post<MachineDTO>(this.api, dto);
+  }
+
+  getMachinesByUser(userId: number): Observable<MachineDTO[]> {
+    return this.auth.get<MachineDTO[]>(`${this.api}/user/${userId}`);
+  }
+
+  /* search sa parametrima */
   search(name?: string, type?: string, state?: string): Observable<MachineDTO[]> {
     let params = new HttpParams();
     if (name)   params = params.set('name', name);
     if (type)   params = params.set('type', type);
     if (state)  params = params.set('state', state);
-    return this.http.get<MachineDTO[]>(this.api, { params, withCredentials: true }); 
+    return this.auth.get<MachineDTO[]>(this.api, params);
   }
-  searchUserMachines(
-  userId: number,
-  name?: string,
-  type?: string,
-  state?: string
-): Observable<MachineDTO[]> {
-  let params = new HttpParams();
-  if (name)  params = params.set('name', name);
-  if (type)  params = params.set('type', type);
-  if (state) params = params.set('state', state);
-  return this.http.get<MachineDTO[]>(`${this.api}/user/${userId}/search`, { params });
-}
 
+  searchUserMachines(userId: number, name?: string, type?: string, state?: string): Observable<MachineDTO[]> {
+    let params = new HttpParams();
+    if (name)  params = params.set('name', name);
+    if (type)  params = params.set('type', type);
+    if (state) params = params.set('state', state);
+    return this.auth.get<MachineDTO[]>(`${this.api}/user/${userId}/search`, params);
+  }
+
+  /* komande mašini */
   start(id: number): Observable<void> {
-    return this.http.put<void>(`${this.api}/${id}/start`, {}, { withCredentials: true });
+    return this.auth.put<void>(`${this.api}/${id}/start`, {});
   }
+
   stop(id: number): Observable<void> {
-    return this.http.put<void>(`${this.api}/${id}/stop`, {}, { withCredentials: true });
+    return this.auth.put<void>(`${this.api}/${id}/stop`, {});
   }
+
   restart(id: number): Observable<void> {
-    return this.http.put<void>(`${this.api}/${id}/restart`, {}, { withCredentials: true });
+    return this.auth.put<void>(`${this.api}/${id}/restart`, {});
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/${id}`, { withCredentials: true });
+    return this.auth.delete<void>(`${this.api}/${id}`);
   }
 
+  /* zakazivanje */
   scheduleOperation(id: number, operation: string, scheduledTime: string): Observable<void> {
-      const body = {
-        operation,
-        scheduledTime,
-      };
-      console.log("Scheduling operation with body:", body);
-      return this.http.post<void>(`${this.api}/${id}/schedule`, body);
-    }
-
-    getMachineById(id: number): Observable<MachineDTO> {
-    return this.http.get<MachineDTO>(`${this.api}/${id}`);
+    const body = { operation, scheduledTime };
+    return this.auth.post<void>(`${this.api}/${id}/schedule`, body);
   }
 
+  /* jedna mašina po ID-u */
+  getMachineById(id: number): Observable<MachineDTO> {
+    return this.auth.get<MachineDTO>(`${this.api}/${id}`);
+  }
 }
