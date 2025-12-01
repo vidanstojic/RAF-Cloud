@@ -17,6 +17,7 @@ import { SearchComponent } from './searchPage/search.component'
 import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ScheduleComponent } from './schedulerPage/schedule.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ScheduleComponent } from './schedulerPage/schedule.component';
     HttpClientModule,          // <- provides HttpClient
     FormsModule,               // <- provides ngModel
     ReactiveFormsModule,       // <- provides formGroup
-    AppRoutingModule           // <- provides router-outlet (already exports RouterModule)
+    AppRoutingModule   ,        // <- provides router-outlet (already exports RouterModule)
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

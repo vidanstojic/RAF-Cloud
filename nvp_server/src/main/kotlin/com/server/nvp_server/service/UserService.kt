@@ -4,16 +4,20 @@ import com.server.nvp_server.dto.UserDTO
 import com.server.nvp_server.model.Permission
 import com.server.nvp_server.model.User
 import com.server.nvp_server.repository.UserRepository
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.Optional
 
 @Service
 class UserService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
 
     fun createUser(user: User): User {
-        return userRepository.save(user)
+        val hashedPassword = passwordEncoder.encode(user.password)
+        val userToSave = user.copy(password = hashedPassword)
+        return userRepository.save(userToSave)
     }
     fun findUserByEmail(email :String): Optional<User>{
         return userRepository.findByEmail(email)

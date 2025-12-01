@@ -5,14 +5,24 @@ import { Observable, Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class WebSocketService {
-  private socket!: WebSocket;
+  private socket: WebSocket | null = null;
   private messageSubject = new Subject<any>();
+  
+  private readonly BASE_URL = 'ws://localhost:8080/ws/machines';
 
   constructor() {
-    this.connect('ws://localhost:8080/ws/machines');
   }
 
-  public connect(url: string): void {
+  public connect(token: string): void {
+    if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
+      console.log('WebSocket is already connected.');
+      return;
+    }
+
+    console.log('Attempting to connect to WebSocket with token...');
+
+    const url = `${this.BASE_URL}?token=${token}`;
+
     this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
@@ -20,19 +30,37 @@ export class WebSocketService {
     };
 
     this.socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      this.messageSubject.next(data);
+      try {
+        const data = JSON.parse(event.data);
+        this.messageSubject.next(data);
+      } catch (e) {
+        console.error('Error parsing message:', e);
+      }
     };
 
-    this.socket.onclose = () => {
-      console.log('WebSocket disconnected');
+    this.socket.onclose = (event) => {
+      console.log('WebSocket disconnected', event);
+      this.socket = null;
+    };
+
+    this.socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
     };
   }
 
   public sendMessage(msg: any): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
-        console.log('Sending WebSocket message:', msg);
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      console.log('Sending WebSocket message:', msg);
       this.socket.send(JSON.stringify(msg));
+    } else {
+      console.warn('Cannot send message: WebSocket is not connected.');
+    }
+  }
+
+  public disconnect(): void {
+    if (this.socket) {
+      this.socket.close();
+      this.socket = null;
     }
   }
 

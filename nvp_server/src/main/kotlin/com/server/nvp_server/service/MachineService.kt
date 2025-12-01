@@ -25,12 +25,9 @@ class MachineService(
     private val machineStatusPublisher: MachineStatusPublisher
 ) {
 
-    val startedMachines = HashSet<Machine>()
-    val restartedMachines = HashSet<Machine>()
-
     fun createMachine(machine: Machine, creator: User): Machine {
         machine.createdBy = creator
-        machine.state = com.server.nvp_server.model.MachineState.OFF
+        machine.state = MachineState.OFF
         return machineRepository.save(machine)
     }
 
@@ -54,6 +51,15 @@ class MachineService(
 
         val machine = getMachineById(id)
 
+        if (machine.state == MachineState.ON){
+            errorRepository.save(ErrorLog(0,"Can not turn on machine that is already turned on",machine,"Starting"))
+            machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
+            return
+        }else if (machine.state == MachineState.OCCUPIED){
+            errorRepository.save(ErrorLog(0,"Can not turn on machine that is occupied",machine,"Starting"))
+            machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
+            return
+        }
 
         GlobalScope.launch {
             delay(10_000)
@@ -63,7 +69,7 @@ class MachineService(
 
             val runningMsg = MachineStatusMessage(
                 machineId = machine.id,
-                status = "RUNNING", // KONTROLNA PORUKA!
+                status = "RUNNING",
                 progress = 100
             )
             machineStatusPublisher.sendStatusUpdate(runningMsg)
@@ -74,6 +80,16 @@ class MachineService(
     fun stopMachine(id: Long) {
         val machine = machineRepository.findById(id).orElseThrow {
             RuntimeException("Mašina ID $id nije pronađena")
+        }
+
+        if (machine.state == MachineState.OFF){
+            errorRepository.save(ErrorLog(0,"Can not turn off machine that is already turned off",machine,"Stopping"))
+            machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
+            return
+        }else if (machine.state == MachineState.OCCUPIED){
+            errorRepository.save(ErrorLog(0,"Can not turn off machine that is occupied",machine,"Stopping"))
+            machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
+            return
         }
 
         machine.state = MachineState.OCCUPIED
@@ -100,6 +116,17 @@ class MachineService(
         val machine = machineRepository.findById(id).orElseThrow {
             RuntimeException("Mašina ID $id nije pronađena")
         }
+
+        if (machine.state == MachineState.OFF){
+            errorRepository.save(ErrorLog(0,"Can not restart machine that is turned off",machine,"Restarting"))
+            machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
+            return
+        }else if (machine.state == MachineState.OCCUPIED){
+            errorRepository.save(ErrorLog(0,"Can not turn on machine that is occupied",machine,"Restarting"))
+            machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
+            return
+        }
+
         machine.state = MachineState.OCCUPIED
         val totalDelay = 10_000L
         val halfDelay = totalDelay / 2
