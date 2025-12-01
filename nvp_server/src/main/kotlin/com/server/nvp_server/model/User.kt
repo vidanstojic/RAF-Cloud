@@ -19,7 +19,7 @@ data class User(
     var email: String,
 
     @Column(nullable = false)
-    var password: String, // TODO: Hash password before saving
+    var password: String,
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_permissions", joinColumns = [JoinColumn(name = "user_id")])

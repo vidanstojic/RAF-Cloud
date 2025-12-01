@@ -5,8 +5,11 @@ import com.server.nvp_server.dto.UserDTO
 import com.server.nvp_server.helpers.JwtUtil
 import com.server.nvp_server.helpers.RequiresPermission
 import com.server.nvp_server.service.UserService
+import io.jsonwebtoken.Jwt
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,35 +19,39 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
+import java.util.Date
 
 @RestController
 @RequestMapping("/api/users")
-class UserController(private val userService: UserService) {
+class UserController(private val userService: UserService, private val jwtUtil: JwtUtil ) {
 
 
     @PostMapping("/loginuser")
     fun login(@RequestBody req: LoginRequest): LoginResponse {
-        println("🔍 Login attempt: ${req.email}")
         val user = userService.findUserByEmail(req.email)
             ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found")
 
-        if (user.orElseThrow().password != req.password) {
+        if (user.orElseThrow().password != req.password)
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credentials")
-        }
 
-        val token = JwtUtil.generateToken(user.orElseThrow().email)
-        println("✅ Login success: ${user.orElseThrow().email}")
-        return LoginResponse(token)
+        val perms = user.orElseThrow().permissions?.map { it.name } ?: emptyList()
+
+        /* koristite JwtUtil da generišete token SA authorities */
+        val token = jwtUtil.generateToken(user.orElseThrow().email, perms)
+
+        return LoginResponse(token, perms)
     }
-
     data class LoginRequest(val email: String, val password: String)
-    data class LoginResponse(val token: String)
+    data class LoginResponse(val token: String,val permissions: List<String>)
 
 
     @RequiresPermission("READING_USER")
     @GetMapping
-    fun getAllUsers(): List<UserDTO> =
-        userService.getAllUsers().map { UserMapper.toDTO(it) }
+    fun getAllUsers(request: HttpServletRequest): List<UserDTO> {
+        println(">>> Authorization: ${request.getHeader("Authorization")}")
+        println(">>> Principal: ${SecurityContextHolder.getContext().authentication}")
+        return userService.getAllUsers().map { UserMapper.toDTO(it) }
+    }
 
     @RequiresPermission("READING_USER")
     @GetMapping("/{id}")
