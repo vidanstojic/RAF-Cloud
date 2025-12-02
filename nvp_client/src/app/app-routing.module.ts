@@ -21,7 +21,6 @@ const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
 
-  /* 1. HOME – samo ulogovani */
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
 
   { path: 'no-access', component: NoAccessComponent },
@@ -34,7 +33,6 @@ const routes: Routes = [
     data: { permission: 'READING_USER' }
   },
 
-  /* 3. ADD-USER – kreiranje user-a */
   {
     path: 'add-user',
     component: AddUserComponent,
@@ -42,7 +40,6 @@ const routes: Routes = [
     data: { permission: 'CREATING_USER' }
   },
 
-  /* 4. CREATE-MACHINE – kreiranje mašine */
   {
     path: 'create-machine',
     component: CreateMachineComponent,
@@ -50,7 +47,6 @@ const routes: Routes = [
     data: { permission: 'CREATING_MACHINE' }
   },
 
-  /* 5. SEARCH-MACHINES – čitanje mašina */
   {
     path: 'search-machines',
     component: SearchComponent,
@@ -58,7 +54,6 @@ const routes: Routes = [
     data: { permission: 'READING_MACHINE' }
   },
 
-  /* 6. EDIT-USER – izmena user-a */
   {
     path: 'edit-user/:id',
     component: EditUserComponent,
@@ -66,7 +61,6 @@ const routes: Routes = [
     data: { permission: 'UPDATE_USER' }
   },
 
-  /* 7. ERROR-LOG – čitanje logova */
   {
     path: 'error-log',
     component: ErrorComponent,
@@ -74,7 +68,6 @@ const routes: Routes = [
     data: { permission: 'READING_ERROR' }
   },
 
-  /* 8. SCHEDULE – pokretanje/zakazivanje mašine */
   {
     path: 'schedule/:id',
     component: ScheduleComponent,
@@ -82,7 +75,6 @@ const routes: Routes = [
     data: { permission: 'STARTING_MACHINE' }
   },
 
-  /* 9. 404 – nazad na login */
   { path: '**', redirectTo: '/login' }
 ];
 

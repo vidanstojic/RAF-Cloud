@@ -55,7 +55,6 @@ class MachineController(
     @PostMapping
     @RequiresPermission("CREATING_MACHINE")
     fun createMachine(@RequestBody dto: MachineDTO): MachineDTO {
-        /* uzimamo trenutnog korisnika iz tokena */
         val email = SecurityContextHolder.getContext().authentication.name
         val owner = userService.findUserByEmail(email)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
