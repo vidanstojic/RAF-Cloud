@@ -33,19 +33,23 @@ export class EditUserComponent implements OnInit {
                                .map(p => p.trim())
                                .filter(p => p);
 
- this.userService.update(this.user.id!, this.user).subscribe({
+this.userService.update(this.user.id!, this.user).subscribe({
   next: (res: any) => {
-    if (res.token) {
-      localStorage.setItem('token', res.token); // ✅ osveži token
-    }
+    const loggedId = this.authService.getUserIdFromToken();
+    const updatedId = this.user.id;
 
-    // Osveži permisije iz novog tokena
-    const newPerms = this.authService.getPermissionsFromToken();
-    localStorage.setItem('permissions', JSON.stringify(newPerms));
+    if (loggedId === updatedId && res.token) {
+      // Menjao sam sebe → osveži token i localStorage
+      localStorage.setItem('token', res.token);
+      const newPerms = this.authService.getPermissionsFromToken();
+      localStorage.setItem('permissions', JSON.stringify(newPerms));
+    } else {
+      // Menjao sam drugog → samo obavesti
+      console.log('Korisniku su ažurirane dozvole.');
+    }
 
     this.router.navigate(['/home']);
   },
   error: err => console.error(err)
 });
-}
-}
+}}
