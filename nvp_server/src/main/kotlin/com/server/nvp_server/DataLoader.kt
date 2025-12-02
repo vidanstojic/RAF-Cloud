@@ -20,20 +20,7 @@ class DataLoader(private val userRepository: UserRepository,
                 email = "admin@raf.rs",
                 password = "admin123",
                 permissions = mutableListOf(
-                    Permission.READING_USER,
-                    Permission.READING_USER,
-                    Permission.CREATING_USER,
-                    Permission.DELETING_USER,
-                    Permission.UPDATE_USER,
-                    Permission. DELETE_MACHINE,
-                    Permission.STARTING_MACHINE,
-                    Permission.CREATING_MACHINE,
-                    Permission. STOPPING_MACHINE,
-                    Permission.RESTARTING_MACHINE,
-                    Permission.DESTROYING_MACHINE,
-                    Permission.READING_ERROR,
-                    Permission.READING_MACHINE,
-                    Permission.SCHEDULING_MACHINE
+                    Permission.ADMIN
                 )
             )
             userService.createUser(admin)

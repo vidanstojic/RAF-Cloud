@@ -44,6 +44,7 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers(HttpMethod.POST, "/api/users/loginuser").permitAll()
+                it.requestMatchers("/**").hasAuthority("ADMIN")
                 it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 it.requestMatchers("/ws/**").permitAll()
                 it.requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("READING_USER")
