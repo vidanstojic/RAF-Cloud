@@ -19,7 +19,14 @@ export class AuthService {
   getPermissions(): string[] {
     try { return JSON.parse(localStorage.getItem('permissions') || '[]'); } catch { return []; }
   }
-  hasPermission(perm: string): boolean { return this.getPermissions().includes(perm); }
+  hasPermission(required: string | string[]): boolean {
+  const perms = JSON.parse(localStorage.getItem('permissions') || '[]') as string[];
+
+  if (perms.includes('ADMIN')) return true; 
+
+  const requiredArray = Array.isArray(required) ? required : [required];
+  return requiredArray.some(r => perms.includes(r));
+}
   logout(): void { localStorage.clear(); }
 
   /* ==========  JEDNA get metoda – pokriva sve slučajeve  ========== */
@@ -78,6 +85,7 @@ getUserIdFromToken(): number {
 
 hasAnyReadingPermission(): boolean {
   const perms = JSON.parse(localStorage.getItem('permissions') || '[]') as string[];
+  if (perms.includes('ADMIN')) return true; 
   const readingPerms = ['READING_USER', 'READING_ADMIN']; 
   return perms.some(p => readingPerms.includes(p));
 }

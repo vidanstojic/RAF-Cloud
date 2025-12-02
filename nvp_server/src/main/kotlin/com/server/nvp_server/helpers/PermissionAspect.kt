@@ -14,20 +14,22 @@ import org.springframework.web.server.ResponseStatusException
 @Component
 class PermissionAspect(private val userService: UserService) {
 
-    @Around("@annotation(requiresPermission)")
-    fun checkPermission(joinPoint: ProceedingJoinPoint, requiresPermission: RequiresPermission): Any? {
+    @Around("@annotation(requiresAny)")  // N O V A
+    fun checkAnyPermission(
+        joinPoint: ProceedingJoinPoint,
+        requiresAny: RequiresAnyPermission
+    ): Any? {
         val auth = SecurityContextHolder.getContext().authentication ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        val email = auth.name
-        val userOpt = userService.findUserByEmail(email)
-        val user = userOpt.orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED) }
+        val user = userService.findUserByEmail(auth.name).orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED) }
 
-        val permissionNames: List<String> = user.permissions
-            ?.map { it.name }
-            ?: emptyList()
+        // ADMIN propust
+        if (user.permissions.any { it == Permission.ADMIN }) return joinPoint.proceed()
 
-        if (!permissionNames.contains(requiresPermission.value))
-            throw ResponseStatusException(HttpStatus.FORBIDDEN, "No permission: ${requiresPermission.value}")
+        // ako poseduje BILO KOJU od navedenih – propust
+        val required = requiresAny.value
+        val userPerms = user.permissions?.map { it.name } ?: emptyList()
+        if (required.any { userPerms.contains(it) }) return joinPoint.proceed()
 
-        return joinPoint.proceed()
+        throw ResponseStatusException(HttpStatus.FORBIDDEN, "No required permission")
     }
 }
