@@ -27,6 +27,7 @@
         <td>{{ user.permissions.join(', ') }}</td>
         <td>
           <button [routerLink]="['/edit-user', user.id]" *ngIf="auth.hasPermission('UPDATE_USER')">Edit</button>
+          <button (click)="deleteUser(user.id!)" *ngIf="auth.hasPermission('DELETING_USER')">Delete</button>
         </td>
       </tr>
     </tbody>

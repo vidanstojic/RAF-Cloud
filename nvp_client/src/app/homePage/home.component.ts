@@ -11,9 +11,15 @@ export class HomeComponent implements OnInit {
 
   constructor(private router: Router, public auth: AuthService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  const perms = this.auth.getPermissions();
+    if (perms.length === 0) {
+      this.router.navigate(['/no-access']);
+    }
+  } 
 
   goToSearchMachines() {
     this.router.navigate(['/search-machines']);
   }
+  
 }

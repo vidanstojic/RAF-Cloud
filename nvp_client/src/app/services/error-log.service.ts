@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface ErrorLogDTO {
@@ -17,6 +17,9 @@ export class ErrorLogService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<ErrorLogDTO[]> {
-    return this.http.get<ErrorLogDTO[]>(this.api);
+    const token = localStorage.getItem('token');
+    return this.http.get<ErrorLogDTO[]>(this.api, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
+    });
   }
 }

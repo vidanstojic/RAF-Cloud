@@ -20,6 +20,16 @@ export class ManagementComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();          
   }
+  deleteUser(id: number): void {
+  if (!confirm('Delete this user?')) return;
+
+  this.userService.delete(id).subscribe({
+    next: () => {
+      this.loadUsers();        // osveži listu
+    },
+    error: err => console.error(err)
+  });
+}
 
   private loadUsers(): void {
     this.userService.getAll().subscribe({

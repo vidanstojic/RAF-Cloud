@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WebSocketService } from './services/websocket.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import { WebSocketService } from './services/websocket.service';
 export class AppComponent implements OnInit {
   title = 'nvp_client';
 
-  constructor(private webSocketService: WebSocketService) {
+  constructor(private webSocketService: WebSocketService, public router: Router) {
   }
 
   ngOnInit(): void {

@@ -5,6 +5,7 @@ body {
 
 main, .main-content, .container {
   margin-top: 0; 
+  padding-top: 70px;
 }
 
 app-header {
