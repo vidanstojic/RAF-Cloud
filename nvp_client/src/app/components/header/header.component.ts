@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from  '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -7,14 +8,14 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  constructor(private router: Router) {}
-
-  goToSearchMachines() {
-    this.router.navigate(['/search-machines']);
-  }
+  constructor(private router: Router, private auth: AuthService) {}
 
   goHome(): void {
     this.router.navigate(['/home']);
   }
 
+  logout(): void {
+    this.auth.logout();   
+    this.router.navigate(['/login']); 
+  }
 }

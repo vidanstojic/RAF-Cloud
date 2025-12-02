@@ -11,6 +11,7 @@ import { SearchComponent } from './searchPage/search.component';
 import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
 import { ErrorComponent } from './errorPage/error.component';
 import { ScheduleComponent } from './schedulerPage/schedule.component';
+import { NoAccessComponent } from './no-access/no-access.component';
 
 /* guard-i */
 import { AuthGuard } from './services/auth-guard.service';
@@ -22,6 +23,8 @@ const routes: Routes = [
 
   /* 1. HOME – samo ulogovani */
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+
+  { path: 'no-access', component: NoAccessComponent },
 
   /* 2. MANAGEMENT – čitanje user-a */
   {
