@@ -21,7 +21,6 @@ class PermissionAspect(private val userService: UserService) {
         val userOpt = userService.findUserByEmail(email)
         val user = userOpt.orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED) }
 
-        // eksplicitno mapiranje
         val permissionNames: List<String> = user.permissions
             ?.map { it.name }
             ?: emptyList()

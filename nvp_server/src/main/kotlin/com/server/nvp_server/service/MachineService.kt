@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 @Service
 class MachineService(
     private val machineRepository: MachineRepository,
-    private val errorRepository: ErrorLogRepository,
+    private val errorService: ErrorLogService,
     private val schedulerRepository: SchedulerRepository,
     private val machineStatusPublisher: MachineStatusPublisher
 ) {
@@ -65,11 +65,11 @@ class MachineService(
         val machine = getMachineById(id)
 
         if (machine.state == MachineState.ON){
-            errorRepository.save(ErrorLog(0,"Can not turn on machine that is already turned on",machine,"Starting"))
+            errorService.createErrorLog(ErrorLog(0,"Can not turn on machine that is already turned on",machine,"Starting"))
             machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
             return
         }else if (machine.state == MachineState.OCCUPIED){
-            errorRepository.save(ErrorLog(0,"Can not turn on machine that is occupied",machine,"Starting"))
+            errorService.createErrorLog(ErrorLog(0,"Can not turn on machine that is occupied",machine,"Starting"))
             machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
             return
         }
@@ -96,11 +96,11 @@ class MachineService(
         }
 
         if (machine.state == MachineState.OFF){
-            errorRepository.save(ErrorLog(0,"Can not turn off machine that is already turned off",machine,"Stopping"))
+            errorService.createErrorLog(ErrorLog(0,"Can not turn off machine that is already turned off",machine,"Stopping"))
             machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
             return
         }else if (machine.state == MachineState.OCCUPIED){
-            errorRepository.save(ErrorLog(0,"Can not turn off machine that is occupied",machine,"Stopping"))
+            errorService.createErrorLog(ErrorLog(0,"Can not turn off machine that is occupied",machine,"Stopping"))
             machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
             return
         }
@@ -131,11 +131,11 @@ class MachineService(
         }
 
         if (machine.state == MachineState.OFF){
-            errorRepository.save(ErrorLog(0,"Can not restart machine that is turned off",machine,"Restarting"))
+            errorService.createErrorLog(ErrorLog(0,"Can not restart machine that is turned off",machine,"Restarting"))
             machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
             return
         }else if (machine.state == MachineState.OCCUPIED){
-            errorRepository.save(ErrorLog(0,"Can not turn on machine that is occupied",machine,"Restarting"))
+            errorService.createErrorLog(ErrorLog(0,"Can not turn on machine that is occupied",machine,"Restarting"))
             machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(machine.id,"404",0))
             return
         }

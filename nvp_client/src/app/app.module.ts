@@ -17,7 +17,6 @@ import { SearchComponent } from './searchPage/search.component'
 import { EditUserComponent } from './editUserPage/edit-user/edit-user.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ScheduleComponent } from './schedulerPage/schedule.component';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NoAccessComponent } from './no-access/no-access.component';
 
@@ -42,7 +41,6 @@ import { NoAccessComponent } from './no-access/no-access.component';
     FormsModule,               // <- provides ngModel
     ReactiveFormsModule,       // <- provides formGroup
     AppRoutingModule   ,        // <- provides router-outlet (already exports RouterModule)
-    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

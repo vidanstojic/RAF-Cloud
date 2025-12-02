@@ -25,7 +25,6 @@ export class MachineService {
 
   constructor(private auth: AuthService) {}
 
-  /* osnovni CRUD – koristeći AuthService helpers */
   create(dto: MachineDTO): Observable<MachineDTO> {
     return this.auth.post<MachineDTO>(this.api, dto);
   }
@@ -34,7 +33,6 @@ export class MachineService {
     return this.auth.get<MachineDTO[]>(`${this.api}/user/${userId}`);
   }
 
-  /* search sa parametrima */
   search(name?: string, type?: string, state?: string): Observable<MachineDTO[]> {
     let params = new HttpParams();
     if (name)   params = params.set('name', name);
@@ -51,7 +49,6 @@ export class MachineService {
     return this.auth.get<MachineDTO[]>(`${this.api}/user/${userId}/search`, params);
   }
 
-  /* komande mašini */
   start(id: number): Observable<void> {
     return this.auth.put<void>(`${this.api}/${id}/start`, {});
   }
@@ -68,13 +65,11 @@ export class MachineService {
     return this.auth.delete<void>(`${this.api}/${id}`);
   }
 
-  /* zakazivanje */
   scheduleOperation(id: number, operation: string, scheduledTime: string): Observable<void> {
     const body = { operation, scheduledTime };
     return this.auth.post<void>(`${this.api}/${id}/schedule`, body);
   }
 
-  /* jedna mašina po ID-u */
   getMachineById(id: number): Observable<MachineDTO> {
     return this.auth.get<MachineDTO>(`${this.api}/${id}`);
   }
