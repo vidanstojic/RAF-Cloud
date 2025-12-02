@@ -108,10 +108,18 @@ export class SearchComponent implements OnInit, OnDestroy {
   
   destroy(m: MachineDTO) {
     if (this.canDestroy(m)) {
-      m.active = false;
-      m.powerState = 'off';
-      console.log(`${m.name} is deleted.`);
-    }
+    this.machineService.delete(m.id!).subscribe({
+      next: () => {
+        console.log(`${m.name} successfully deleted on backend.`);
+        m.active = false;
+        m.powerState = 'off';
+      },
+      error: err => {
+        console.error("Delete failed:", err);
+        alert("Brisanje mašine nije uspelo.");
+      }
+    });
+  }
   }
 
   canTurnOn(m: MachineDTO): boolean {
@@ -129,8 +137,15 @@ export class SearchComponent implements OnInit, OnDestroy {
 
 
   canDestroy(m: MachineDTO): boolean {
-    return m.active === true && m.powerState === 'off';
-  }
+  return (m.active === true && m.powerState === 'off' && !m.starting && !m.restarting && !m.shuttingDown
+  );
+}
+
+isDisabled(m: MachineDTO): boolean {
+  return m.active === false;
+}
+
+
 
   goToSchedule(m: MachineDTO): void {
     this.router.navigate(['/schedule', m.id]);
@@ -140,17 +155,18 @@ export class SearchComponent implements OnInit, OnDestroy {
     const machineToUpdate = this.results.find(m => m.id === status.machineId); //
 
     if (machineToUpdate) {
-      machineToUpdate.state = status.status; //
       
       switch (status.status) {
         case '200':
         case 'STARTING':
         case 'SCHEDULED_START':
+          machineToUpdate.state = 'STARTING';
           machineToUpdate.starting = true;
           machineToUpdate.powerState = 'on';
           break;
         case 'RUNNING':
         case 'ON':
+          machineToUpdate.state = 'RUNNING';
           machineToUpdate.restarting = false;
           machineToUpdate.starting = false;
           machineToUpdate.powerState = 'on'; //
@@ -159,12 +175,14 @@ export class SearchComponent implements OnInit, OnDestroy {
         case '201':
         case 'SHUTTING_DOWN':
         case 'SCHEDULED_STOP':
+          machineToUpdate.state = 'SHUTTING_DOWN';
           machineToUpdate.shuttingDown = true;
           machineToUpdate.powerState = 'on';
           break;
           
         case 'OFF':
         case 'STOPPED':
+          machineToUpdate.state = 'OFF';
           machineToUpdate.shuttingDown = false;
           machineToUpdate.powerState = 'off'; //
           break;
@@ -172,13 +190,14 @@ export class SearchComponent implements OnInit, OnDestroy {
         case '202':
         case 'RESTARTING':
         case 'SCHEDULED_RESTART':
+          machineToUpdate.state = 'RESTARTING';
           machineToUpdate.restarting = true;
           machineToUpdate.powerState = 'off';
           break;
           
         case '404':
           console.error(`Mašina ID ${status.machineId} nije pronađena.`);
-          alert(`Operacija '${status.operation}' nije uspešno zakazana za ${status.machineId}.`);
+          alert(`Operacija '${status.machineId.operation}' nije uspešno izvrsena za ${status.machineId.name}.`);
           break;
           
         default:
