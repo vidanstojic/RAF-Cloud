@@ -1,6 +1,6 @@
 package com.server.nvp_server.controller
 import MachineDTO
-import com.server.nvp_server.helpers.RequiresPermission
+import com.server.nvp_server.helpers.RequiresAnyPermission
 import com.server.nvp_server.model.Machine
 import com.server.nvp_server.model.MachineState
 import com.server.nvp_server.service.MachineService
@@ -28,7 +28,7 @@ class MachineController(
 ) {
 
     @GetMapping
-    @RequiresPermission("READING_MACHINE")
+    @RequiresAnyPermission("READING_MACHINE", "ADMIN")
     fun getMachines(@RequestParam(required = false) name: String?,
                     @RequestParam(required = false) type: String?,
                     @RequestParam(required = false) state: String?): List<MachineDTO> {
@@ -40,7 +40,7 @@ class MachineController(
 
 
     @GetMapping("/user/{userId}")
-    @RequiresPermission("READING_MACHINE")
+    @RequiresAnyPermission("READING_MACHINE", "ADMIN")
     fun getMachinesByUserId(@PathVariable userId: Long?): List<MachineDTO> {
         val effectiveId = userId ?: run {
             val email = SecurityContextHolder.getContext().authentication.name
@@ -53,7 +53,7 @@ class MachineController(
     }
 
     @PostMapping
-    @RequiresPermission("CREATING_MACHINE")
+    @RequiresAnyPermission("CREATING_MACHINE", "ADMIN")
     fun createMachine(@RequestBody dto: MachineDTO): MachineDTO {
         val email = SecurityContextHolder.getContext().authentication.name
         val owner = userService.findUserByEmail(email)
@@ -63,7 +63,7 @@ class MachineController(
         return MachineMapper.toDTO(machine)
     }
     @GetMapping("/user/{userId}/search")
-    @RequiresPermission("READING_MACHINE")
+    @RequiresAnyPermission("READING_MACHINE", "ADMIN")
     fun searchUserMachines(
         @PathVariable userId: Long,
         @RequestParam(required = false) name: String?,
@@ -74,23 +74,23 @@ class MachineController(
             .map { MachineMapper.toDTO(it) }
 
     @GetMapping("/{id}")
-    @RequiresPermission("READING_MACHINE")
+    @RequiresAnyPermission("READING_MACHINE", "ADMIN")
     fun getMachineById(@PathVariable id: Long): MachineDTO =
         MachineMapper.toDTO(machineService.getMachineById(id))
 
     @PutMapping("/{id}/start")
-    @RequiresPermission("STARTING_MACHINE")
+    @RequiresAnyPermission("STARTING_MACHINE", "ADMIN")
     fun startMachine(@PathVariable id: Long) = machineService.startMachine(id)
 
     @PutMapping("/{id}/stop")
-    @RequiresPermission("STOPPING_MACHINE")
+    @RequiresAnyPermission("STOPPING_MACHINE", "ADMIN")
     fun stopMachine(@PathVariable id: Long) = machineService.stopMachine(id)
 
     @PutMapping("/{id}/restart")
-    @RequiresPermission("RESTARTING_MACHINE")
+    @RequiresAnyPermission("RESTARTING_MACHINE", "ADMIN")
     fun restartMachine(@PathVariable id: Long) = machineService.restartMachine(id)
 
     @DeleteMapping("/{id}")
-    @RequiresPermission("DESTROYING_MACHINE")
+    @RequiresAnyPermission("DESTROYING_MACHINE", "ADMIN")
     fun deleteMachine(@PathVariable id: Long) = machineService.deleteMachine(id)
 }

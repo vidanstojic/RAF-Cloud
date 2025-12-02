@@ -3,6 +3,7 @@ package com.server.nvp_server.model
 import jakarta.persistence.*
 
 enum class Permission{
+    ADMIN,
     READING_USER,
     CREATING_USER,
     DELETING_USER,

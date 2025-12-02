@@ -3,7 +3,7 @@ package com.server.nvp_server.controller
 
 import com.server.nvp_server.dto.UserDTO
 import com.server.nvp_server.helpers.JwtUtil
-import com.server.nvp_server.helpers.RequiresPermission
+import com.server.nvp_server.helpers.RequiresAnyPermission
 import com.server.nvp_server.service.UserService
 import io.jsonwebtoken.Jwt
 import jakarta.servlet.http.HttpServletRequest
@@ -49,7 +49,7 @@ class UserController(
     data class LoginRequest(val email: String, val password: String)
     data class LoginResponse(val token: String,val permissions: List<String>)
 
-    @RequiresPermission("READING_USER")
+    @RequiresAnyPermission("READING_USER", "ADMIN")
     @GetMapping
     fun getAllUsers(request: HttpServletRequest): List<UserDTO> {
         println(">>> Authorization: ${request.getHeader("Authorization")}")
@@ -57,29 +57,29 @@ class UserController(
         return userService.getAllUsers().map { UserMapper.toDTO(it) }
     }
 
-    @RequiresPermission("READING_USER")
+    @RequiresAnyPermission("READING_USER", "ADMIN")
     @GetMapping("/{email}")
     fun getUserByEmail(@PathVariable email: String): UserDTO =
         UserMapper.toDTO(userService.findUserByEmail(email).orElseThrow())
 
 
-    @RequiresPermission("READING_USER")
+    @RequiresAnyPermission("READING_USER", "ADMIN")
     @GetMapping("/{id}")
     fun getUser(@PathVariable id: Long): UserDTO =
         UserMapper.toDTO(userService.getUserById(id)!!)
 
-    @RequiresPermission("CREATING_USER")
+    @RequiresAnyPermission("CREATING_USER", "ADMIN")
     @PostMapping
     fun createUser(@RequestBody dto: UserDTO): UserDTO =
         UserMapper.toDTO(userService.createUser(UserMapper.toEntity(dto)))
 
-    @RequiresPermission("DELETING_USER")
+    @RequiresAnyPermission("DELETING_USER", "ADMIN")
     @DeleteMapping("/{id}")
     fun deleteUser(@PathVariable id: Long) {
         userService.deleteUser(id)
     }
 
-    @RequiresPermission("UPDATE_USER")
+    @RequiresAnyPermission("UPDATE_USER", "ADMIN")
     @PutMapping("/{id}")
     fun updateUser(
         @PathVariable id: Long,
