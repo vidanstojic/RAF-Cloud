@@ -60,26 +60,27 @@
     <td class="actions">
   <button (click)="turnOn(m)"
           *ngIf="auth.hasPermission('STARTING_MACHINE')"
-          [disabled]="!canTurnOn(m)"
+          [disabled]="isDisabled(m) || !canTurnOn(m)"
           class="btn-upali">Upali</button>
 
   <button (click)="turnOff(m)"
           *ngIf="auth.hasPermission('STOPPING_MACHINE')"
-          [disabled]="!canTurnOff(m)"
+          [disabled]="isDisabled(m) || !canTurnOff(m)"
           class="btn-ugasi">Ugasi</button>
 
   <button (click)="restart(m)"
           *ngIf="auth.hasPermission('RESTARTING_MACHINE')"
-          [disabled]="!canRestart(m)"
+          [disabled]="isDisabled(m) || !canRestart(m)"
           class="btn-restart">Restartuj</button>
 
   <button (click)="destroy(m)"
           *ngIf="auth.hasPermission('DESTROYING_MACHINE')"
-          [disabled]="!canDestroy(m)"
+          [disabled]="isDisabled(m) || !canDestroy(m)"
           class="btn-unisti">Uništi</button>
 
   <button (click)="goToSchedule(m)"
           *ngIf="auth.hasPermission('SCHEDULING_MACHINE')"
+          [disabled]="isDisabled(m)"
           class="btn-zakazi">Zakaži</button>
 </td>
         </tr>
