@@ -9,15 +9,13 @@ import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.server.HandshakeInterceptor
 import java.security.Principal
 import java.net.URI
-
-// Jednostavna klasa koja čuva identitet korisnika
 class CustomUserPrincipal(private val email: String) : Principal {
     override fun getName(): String = email
 }
 
 @Component
 class CustomAuthInterceptor(
-    private val jwtUtil: JwtUtil // <--- PROMENA 1: Injektujemo instancu servisa
+    private val jwtUtil: JwtUtil
 ) : HandshakeInterceptor {
 
     override fun beforeHandshake(
@@ -26,7 +24,6 @@ class CustomAuthInterceptor(
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>
     ): Boolean {
-        // 1. Ekstrakcija tokena iz URL-a
         val uri: URI = request.uri
         val query = uri.query
 
@@ -36,29 +33,27 @@ class CustomAuthInterceptor(
             ?.get(1)
 
         if (token.isNullOrEmpty()) {
-            println("❌ WS: Token nije prosleđen.")
+            println("WS: Token nije prosleđen.")
             response.setStatusCode(HttpStatus.UNAUTHORIZED)
             return false
         }
 
-        // 2. Validacija tokena koristeći injektovanu instancu
         return try {
-            // PROMENA 2: Koristimo 'jwtUtil' (instancu), a ne 'JwtUtil' (klasu)
             if (jwtUtil.isTokenValid(token)) {
-                val email = jwtUtil.extractEmail(token) // <--- I ovde mala slova
+                val email = jwtUtil.extractEmail(token)
 
                 val principal = CustomUserPrincipal(email)
                 attributes["user"] = principal
 
-                println("✅ WS: Konekcija odobrena za: $email")
+                println("WS: Konekcija odobrena za: $email")
                 true
             } else {
-                println("❌ WS: Token nije validan.")
+                println("WS: Token nije validan.")
                 response.setStatusCode(HttpStatus.FORBIDDEN)
                 false
             }
         } catch (e: Exception) {
-            println("❌ WS: Greška pri validaciji tokena: ${e.message}")
+            println("WS: Greška pri validaciji tokena: ${e.message}")
             response.setStatusCode(HttpStatus.FORBIDDEN)
             false
         }
@@ -70,6 +65,5 @@ class CustomAuthInterceptor(
         wsHandler: WebSocketHandler,
         exception: Exception?
     ) {
-        // Nije potrebno
     }
 }

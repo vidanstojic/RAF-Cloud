@@ -46,7 +46,6 @@ class SecurityConfig(
                 it.requestMatchers(HttpMethod.POST, "/api/users/loginuser").permitAll()
                 it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 it.requestMatchers("/ws/**").permitAll()
-                /* dozvole po potrebi */
                 it.requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("READING_USER")
                 it.requestMatchers(HttpMethod.POST, "/api/machines").hasAuthority("CREATING_MACHINE")
                 it.requestMatchers(HttpMethod.DELETE, "/api/machines/**").hasAuthority("DESTROYING_MACHINE")

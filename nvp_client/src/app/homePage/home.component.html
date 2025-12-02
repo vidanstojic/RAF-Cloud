@@ -5,7 +5,6 @@
     <div class="container">
       <div class="card-column">
 
-        <!-- User Management – READING_USER -->
         <div class="card user-management-card"
              routerLink="/management"
              *ngIf="auth.hasPermission('READING_USER')">
@@ -15,7 +14,6 @@
           </div>
         </div>
 
-        <!-- Search Machines – READING_MACHINE -->
         <div class="card user-management-card"
              routerLink="/search-machines"
              *ngIf="auth.hasPermission('READING_MACHINE')">
@@ -25,7 +23,6 @@
           </div>
         </div>
 
-        <!-- Create Machine – CREATING_MACHINE -->
         <div class="card user-management-card"
              routerLink="/create-machine"
              *ngIf="auth.hasPermission('CREATING_MACHINE')">
@@ -35,7 +32,6 @@
           </div>
         </div>
 
-        <!-- Error Log – READING_ERROR -->
         <div class="card user-management-card"
              routerLink="/error-log"
              *ngIf="auth.hasPermission('READING_ERROR')">
