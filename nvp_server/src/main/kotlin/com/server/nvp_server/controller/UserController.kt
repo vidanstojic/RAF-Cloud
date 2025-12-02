@@ -58,6 +58,12 @@ class UserController(
     }
 
     @RequiresPermission("READING_USER")
+    @GetMapping("/{email}")
+    fun getUserByEmail(@PathVariable email: String): UserDTO =
+        UserMapper.toDTO(userService.findUserByEmail(email).orElseThrow())
+
+
+    @RequiresPermission("READING_USER")
     @GetMapping("/{id}")
     fun getUser(@PathVariable id: Long): UserDTO =
         UserMapper.toDTO(userService.getUserById(id)!!)

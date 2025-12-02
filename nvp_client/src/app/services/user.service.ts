@@ -32,4 +32,7 @@ export class UserService {
   delete(id: number): Observable<void> {
     return this.auth.delete<void>(`${this.api}/${id}`);
   }
+  findUserByEmail(email: string): Observable<User> {
+  return this.auth.get<User>(`${this.api}/email/${email}`);
+}
 }
