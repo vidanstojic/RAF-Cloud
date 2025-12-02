@@ -81,12 +81,32 @@ class UserController(
 
     @RequiresPermission("UPDATE_USER")
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable id: Long, @RequestBody dto: UserDTO): ResponseEntity<UserDTO> =
-        try {
-            ResponseEntity.ok(UserMapper.toDTO(userService.updateUser(id, dto)))
-        } catch (ex: NoSuchElementException) {
-            ResponseEntity.notFound().build()
-        } catch (ex: IllegalArgumentException) {
-            ResponseEntity.badRequest().build()
+    fun updateUser(
+        @PathVariable id: Long,
+        @RequestBody dto: UserDTO,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> = try {
+
+        val updated = userService.updateUser(id, dto)
+        val perms = updated.permissions?.map { it.name } ?: emptyList()
+
+        // KO je ulogovan?
+        val authEmail = SecurityContextHolder.getContext().authentication.name
+        val loggedId = userService.findUserByEmail(authEmail).get().id
+
+        val body: MutableMap<String, Any> = mutableMapOf(
+            "user" to UserMapper.toDTO(updated)
+        )
+
+        // Ako menja SAM SEBE – dodaj token
+        if (loggedId == id) {
+            body["token"] = jwtUtil.generateToken(updated.email, perms)
         }
+
+        ResponseEntity.ok(body)
+    } catch (ex: NoSuchElementException) {
+        ResponseEntity.notFound().build()
+    } catch (ex: IllegalArgumentException) {
+        ResponseEntity.badRequest().build()
+    }
 }

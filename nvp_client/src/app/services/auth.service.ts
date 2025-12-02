@@ -64,4 +64,21 @@ getPermissionsFromToken(): string[] {
     return [];
   }
 }
+getUserIdFromToken(): number {
+  const token = localStorage.getItem('token');
+  if (!token) return 0;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || 0;   // prilagodi ključ ako ga zoveš drugačije
+  } catch {
+    return 0;
+  }
+}
+
+hasAnyReadingPermission(): boolean {
+  const perms = JSON.parse(localStorage.getItem('permissions') || '[]') as string[];
+  const readingPerms = ['READING_USER', 'READING_ADMIN']; 
+  return perms.some(p => readingPerms.includes(p));
+}
 }

@@ -19,7 +19,7 @@ export class AddUserComponent {
               private router: Router) {}
 
   addUser(): void {
-    if (!this.firstName || !this.lastName || !this.email || !this.permissions || !this.password) {
+    if (!this.firstName || !this.lastName || !this.email || !this.password) {
       this.errorMessage = 'Sva polja su obavezna!';
       return;
     }

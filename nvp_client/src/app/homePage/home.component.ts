@@ -13,7 +13,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
   const perms = this.auth.getPermissions();
-    if (perms.length === 0) {
+    if (perms.length === 0 || this.auth.hasAnyReadingPermission() === false) {
       this.router.navigate(['/no-access']);
     }
   } 
