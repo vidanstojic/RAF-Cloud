@@ -14,6 +14,7 @@ import com.server.nvp_server.websocket.publisher.MachineStatusPublisher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -165,9 +166,14 @@ class MachineService(
         val scheduled = schedulerRepository.findAllByScheduledTimeBetween(LocalDateTime.now().minusMinutes(1), LocalDateTime.now())
 
         for (scheduler in scheduled) {
+            if (!scheduler.machine.active){
+                errorService.createErrorLog(ErrorLog(0,"Can not execute operation " + scheduler.operation + "because machine is destroyed",scheduler.machine,scheduler.operation))
+                machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(scheduler.machine.id,"404",0))
+                continue
+            }
             val statusMessage = MachineStatusMessage(
                 machineId = scheduler.machine.id,
-                status = "SCHEDULED_${scheduler.operation}",
+                status = "SCHEDULED_${scheduler.operation.toUpperCase()}",
                 progress = 0
             )
             println(statusMessage)
