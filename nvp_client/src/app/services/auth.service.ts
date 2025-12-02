@@ -47,4 +47,21 @@ export class AuthService {
       .set('Content-Type', 'application/json')
       .set('Authorization', token ? `Bearer ${token}` : '');
   }
+  getCurrentUserEmail(): string {
+  const token = localStorage.getItem('token');
+  if (!token) return '';
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  return payload.sub || ''; // 'sub' je standardni JWT claim za email
+}
+getPermissionsFromToken(): string[] {
+  const token = localStorage.getItem('token');
+  if (!token) return [];
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));   // payload drugi deo
+    return payload.permissions || payload.authorities || [];  // prilagodi ključ
+  } catch {
+    return [];
+  }
+}
 }
