@@ -29,7 +29,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const user = JSON.parse(localStorage.getItem('loggedUser') || '{}');
     this.currentUserId = user?.id || -1;
-    this.loadMyMachines();
+    this.loadMachines();
     this.subscribeToMachineStatus();
   }
 
@@ -39,19 +39,28 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadMyMachines(): void {
-    this.machineService.getMachinesByUser(this.currentUserId)
-      .subscribe(list => {
-        this.machines = list;
-        this.results = list;
-        this.results.forEach(m => {
-          m.powerState = (m.state === 'ON' || m.state === 'RUNNING') ? 'on' : 'off';
-          m.starting = m.state === 'OCCUPIED' && m.powerState === 'off';
-          m.shuttingDown = m.state === 'OCCUPIED' && m.powerState === 'on';
-          m.restarting = false;
-        });
-      });
+  private loadMachines(): void {
+    console.log("Loading machines...");
+  if (this.auth.hasPermission('ADMIN')) {
+    // admin – sve mašine
+    
+    this.machineService.getAllMachines().subscribe({
+      next: data => {
+        console.log('>>> Angular primio:', data); // ➜ ovde
+        this.machines = data;
+      },
+      error: err => console.error(err)
+    });
+  } else {
+    // običan user – samo svoje
+    
+    const userId = this.auth.getUserIdFromToken();
+    this.machineService.getMachinesByUser(userId).subscribe({
+      next: data => this.machines = data,
+      error: err => console.error(err)
+    });
   }
+}
   search(): void {
     this.machineService.searchUserMachines(
       this.currentUserId,

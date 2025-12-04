@@ -19,26 +19,28 @@ private val jwtUtil: JwtUtil
         response: HttpServletResponse,
         chain: FilterChain
     ) {
-        println(">>> JWT filter entered")
         val header = request.getHeader("Authorization")
-        println(">>> Auth header: $header")
         if (header != null && header.startsWith("Bearer ")) {
             val token = header.substring(7)
-            println(">>> Token: $token")
             try {
                 val email = jwtUtil.extractEmail(token)
-                println(">>> Email from token: $email")
                 if (jwtUtil.isTokenValid(token)) {
-                    val authorities = jwtUtil.extractAuthorities(token)
-                    println(">>> Authorities from token: $authorities")
+                    val authorities = jwtUtil.extractAuthorities(token).toMutableList()
+
+                    // ➜ ako postoji ADMIN u JWT-u – dodaj Spring-ovu rolu
+                    if ("ADMIN" in authorities) {
+                        authorities.add("ADMIN")
+                    }
+
                     val auth = UsernamePasswordAuthenticationToken(
-                        email, null, authorities.map { SimpleGrantedAuthority(it) }
+                        email,
+                        null,
+                        authorities.map { SimpleGrantedAuthority(it) }
                     )
                     SecurityContextHolder.getContext().authentication = auth
-                    println(">>> Authentication set: ${SecurityContextHolder.getContext().authentication}")
                 }
             } catch (e: Exception) {
-                println(">>> Token error: ${e.message}")
+                // token invalidan – pusti da prođe, ali bez autentikacije
             }
         }
         chain.doFilter(request, response)
