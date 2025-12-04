@@ -36,17 +36,14 @@ class UserService(
         userRepository.deleteById(id)
     }
     fun updateUser(id: Long, dto: UserDTO): User {
-        // 1. load attached entity
         val existing = userRepository.findById(id)
             .orElseThrow { NoSuchElementException("User $id not found") }
 
-        // 2. duplicate e-mail guard
         userRepository.findByEmail(dto.email)
             .ifPresent {
                 if (it.id != id) throw IllegalArgumentException("E-mail already in use")
             }
 
-        // 3. copy simple fields
         existing.firstName = dto.firstName
         existing.lastName  = dto.lastName
         existing.email     = dto.email

@@ -27,7 +27,6 @@ private val jwtUtil: JwtUtil
                 if (jwtUtil.isTokenValid(token)) {
                     val authorities = jwtUtil.extractAuthorities(token).toMutableList()
 
-                    // ➜ ako postoji ADMIN u JWT-u – dodaj Spring-ovu rolu
                     if ("ADMIN" in authorities) {
                         authorities.add("ADMIN")
                     }
@@ -40,7 +39,7 @@ private val jwtUtil: JwtUtil
                     SecurityContextHolder.getContext().authentication = auth
                 }
             } catch (e: Exception) {
-                // token invalidan – pusti da prođe, ali bez autentikacije
+                println("Nevalidan token")
             }
         }
         chain.doFilter(request, response)

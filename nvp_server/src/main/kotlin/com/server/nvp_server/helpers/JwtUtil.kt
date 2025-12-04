@@ -11,7 +11,6 @@ import javax.crypto.SecretKey
 class JwtUtil {
     private val key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
 
-    /* bez autoriteta – za filter */
     fun generateToken(email: String): String =
         Jwts.builder()
             .setSubject(email)
@@ -19,7 +18,6 @@ class JwtUtil {
             .signWith(key)
             .compact()
 
-    /* SA autoritetima – za login */
     fun generateToken(email: String, authorities: List<String>): String =
         Jwts.builder()
             .setSubject(email)
@@ -28,7 +26,6 @@ class JwtUtil {
             .signWith(key)
             .compact()
 
-    /* ostali metodi ostaju isti */
     fun extractEmail(token: String): String =
         Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body.subject
 

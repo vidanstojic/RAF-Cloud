@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { AuthService } from  '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class WebSocketService {
   
   private readonly BASE_URL = 'ws://localhost:8080/ws/machines';
 
-  constructor() {
+  constructor( private auth: AuthService) {
   }
 
   public connect(token: string): void {
@@ -39,6 +40,7 @@ export class WebSocketService {
     };
 
     this.socket.onclose = (event) => {
+      this.auth.logout();   
       console.log('WebSocket disconnected', event);
       this.socket = null;
     };

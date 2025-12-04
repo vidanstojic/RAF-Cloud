@@ -41,7 +41,6 @@ class UserController(
 
         val perms = user.orElseThrow().permissions?.map { it.name } ?: emptyList()
 
-        /* koristite JwtUtil da generišete token SA authorities */
         val token = jwtUtil.generateToken(user.orElseThrow().email, perms)
 
         return LoginResponse(token, perms)
@@ -90,7 +89,6 @@ class UserController(
         val updated = userService.updateUser(id, dto)
         val perms = updated.permissions?.map { it.name } ?: emptyList()
 
-        // KO je ulogovan?
         val authEmail = SecurityContextHolder.getContext().authentication.name
         val loggedId = userService.findUserByEmail(authEmail).get().id
 
@@ -98,7 +96,6 @@ class UserController(
             "user" to UserMapper.toDTO(updated)
         )
 
-        // Ako menja SAM SEBE – dodaj token
         if (loggedId == id) {
             body["token"] = jwtUtil.generateToken(updated.email, perms)
         }

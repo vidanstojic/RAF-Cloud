@@ -41,14 +41,12 @@ export class SearchComponent implements OnInit, OnDestroy {
   private loadMachines(): void {
     console.log("Loading machines...");
   if (this.auth.hasPermission('ADMIN')) {
-    // admin – sve mašine
-    
     this.machineService.getAllMachines().subscribe({
       next: data => {
-        console.log('>>> Angular primio:', data); // ➜ ovde
+        console.log('>>> Angular primio:', data);
         this.machines = data;
         this.machines.forEach(m => {
-          console.log(`Processing machine: ${m.name} with state: ${m.state}`); // ➜ ovde
+          console.log(`Processing machine: ${m.name} with state: ${m.state}`);
           m.powerState = (m.state === 'ON' || m.state === 'RUNNING') ? 'on' : 'off';
           m.starting = m.state === 'OCCUPIED' && m.powerState === 'off';
           m.shuttingDown = m.state === 'OCCUPIED' && m.powerState === 'on';
@@ -58,15 +56,13 @@ export class SearchComponent implements OnInit, OnDestroy {
       error: err => console.error(err)
     });
   } else {
-    // običan user – samo svoje
-    
     const userId = this.auth.getUserIdFromToken();
     this.machineService.getAllMachines().subscribe({
       next: data => {
-        console.log('>>> Angular primio:', data); // ➜ ovde
+        console.log('>>> Angular primio:', data);
         this.machines = data;
         this.machines.forEach(m => {
-          console.log(`Processing machine: ${m.name} with state: ${m.state}`); // ➜ ovde
+          console.log(`Processing machine: ${m.name} with state: ${m.state}`);
           m.powerState = (m.state === 'ON' || m.state === 'RUNNING') ? 'on' : 'off';
           m.starting = m.state === 'OCCUPIED' && m.powerState === 'off';
           m.shuttingDown = m.state === 'OCCUPIED' && m.powerState === 'on';
@@ -177,7 +173,7 @@ isDisabled(m: MachineDTO): boolean {
   }
   private subscribeToMachineStatus(): void {
   this.wsSubscription = this.webSocketService.messages.subscribe(status => { 
-    const machineToUpdate = this.machines.find(m => m.id === status.machineId); //
+    const machineToUpdate = this.machines.find(m => m.id === status.machineId);
 
     if (machineToUpdate) {
       
@@ -230,7 +226,7 @@ isDisabled(m: MachineDTO): boolean {
           break;
       }
       
-      console.log(`Status update for ${machineToUpdate.name}: ${status.status}`); //
+      console.log(`Status update for ${machineToUpdate.name}: ${status.status}`);
     }
   });
 }

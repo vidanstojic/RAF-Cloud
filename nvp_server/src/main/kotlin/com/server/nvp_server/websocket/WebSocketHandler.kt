@@ -1,7 +1,6 @@
 package com.server.nvp_server.websocket
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.server.nvp_server.model.Machine
 import com.server.nvp_server.repository.MachineRepository
 import com.server.nvp_server.service.MachineService
 import com.server.nvp_server.websocket.dto.MachineCommandMessage
@@ -16,7 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Component
-class MachineWebSocketHandler(
+class WebSocketHandler(
     private val machineService: MachineService,
     private val machineStatusPublisher: MachineStatusPublisher,
     private val machineRepository: MachineRepository
