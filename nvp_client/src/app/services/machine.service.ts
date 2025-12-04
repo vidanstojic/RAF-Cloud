@@ -33,6 +33,11 @@ export class MachineService {
     return this.auth.get<MachineDTO[]>(`${this.api}/user/${userId}`);
   }
 
+  getAllMachines(): Observable<MachineDTO[]> {
+    console.log("usao u getAllMachines()");
+    return this.auth.get<MachineDTO[]>(`${this.api}/all`);
+  }
+
   search(name?: string, type?: string, state?: string): Observable<MachineDTO[]> {
     let params = new HttpParams();
     if (name)   params = params.set('name', name);

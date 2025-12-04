@@ -77,7 +77,7 @@ getUserIdFromToken(): number {
 
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.userId || 0;   // prilagodi ključ ako ga zoveš drugačije
+    return payload.userId || 0;   
   } catch {
     return 0;
   }

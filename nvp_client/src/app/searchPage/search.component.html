@@ -37,26 +37,26 @@
   </div>
 
   <div class="results-card">
-    <h3>Results ({{ results.length }})</h3>
+  <h3>Machines ({{ machines.length }})</h3>
 
-    <table class="results-table" *ngIf="results.length">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>State</th>
-          <th>Active</th>
-          <th>Description</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let m of results">
-          <td>{{ m.name }}</td>
-          <td>{{ m.type }}</td>
-          <td>{{ m.state }}</td>
-          <td>{{ m.active ? 'Yes' : 'No' }}</td>
-          <td>{{ m.description }}</td>
+  <table class="results-table" *ngIf="machines.length">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>State</th>
+        <th>Active</th>
+        <th>Description</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of machines">
+        <td>{{ m.name }}</td>
+        <td>{{ m.type }}</td>
+        <td>{{ m.state }}</td>
+        <td>{{ m.active ? 'Yes' : 'No' }}</td>
+        <td>{{ m.description }}</td>
     <td class="actions">
   <button (click)="turnOn(m)"
           *ngIf="auth.hasPermission('STARTING_MACHINE')"
@@ -87,8 +87,8 @@
       </tbody>
     </table>
 
-    <div *ngIf="!results.length" class="no-results">
-      No machines found.
-    </div>
+ 
+  <div *ngIf="!machines.length" class="no-results">
+    No machines found.
   </div>
 </div>

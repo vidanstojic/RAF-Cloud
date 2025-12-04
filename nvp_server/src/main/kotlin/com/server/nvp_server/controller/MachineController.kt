@@ -28,7 +28,6 @@ class MachineController(
 ) {
 
     @GetMapping
-    @RequiresAnyPermission("READING_MACHINE", "ADMIN")
     fun getMachines(@RequestParam(required = false) name: String?,
                     @RequestParam(required = false) type: String?,
                     @RequestParam(required = false) state: String?): List<MachineDTO> {
@@ -36,6 +35,15 @@ class MachineController(
         println(">>> Authorities: ${SecurityContextHolder.getContext().authentication?.authorities}")
         return machineService.searchMachines(name, type, state).map { MachineMapper.toDTO(it) };
 
+    }
+
+
+    @GetMapping("/all")
+    @RequiresAnyPermission("ADMIN")
+    fun getMachinesAdmin(): List<MachineDTO> {
+        val machines = machineService.getAllMachines()
+        println(">>> RAW machines from repo: $machines")
+        return machines.map { MachineMapper.toDTO(it) }
     }
 
 
