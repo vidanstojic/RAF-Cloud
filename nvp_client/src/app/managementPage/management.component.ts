@@ -25,7 +25,7 @@ export class ManagementComponent implements OnInit {
 
   this.userService.delete(id).subscribe({
     next: () => {
-      this.loadUsers();        // osveži listu
+      this.loadUsers();
     },
     error: err => console.error(err)
   });

@@ -25,7 +25,6 @@ const routes: Routes = [
 
   { path: 'no-access', component: NoAccessComponent },
 
-  /* 2. MANAGEMENT – čitanje user-a */
   {
     path: 'management',
     component: ManagementComponent,

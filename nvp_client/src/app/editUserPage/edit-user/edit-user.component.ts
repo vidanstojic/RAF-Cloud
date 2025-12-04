@@ -39,12 +39,10 @@ this.userService.update(this.user.id!, this.user).subscribe({
     const updatedId = this.user.id;
 
     if (loggedId === updatedId && res.token) {
-      // Menjao sam sebe → osveži token i localStorage
       localStorage.setItem('token', res.token);
       const newPerms = this.authService.getPermissionsFromToken();
       localStorage.setItem('permissions', JSON.stringify(newPerms));
     } else {
-      // Menjao sam drugog → samo obavesti
       console.log('Korisniku su ažurirane dozvole.');
     }
 

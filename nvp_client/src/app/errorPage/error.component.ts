@@ -18,10 +18,8 @@ export class ErrorComponent implements OnInit {
 
   private loadLogs(): void {
   if (this.auth.hasPermission('ADMIN')) {
-    // admin – sve logove
     this.service.getAll().subscribe(list => this.errors = list);
   } else {
-    // običan korisnik – samo svoje
     const userId = this.auth.getUserIdFromToken();
     this.service.getLogsByUser(userId).subscribe(list => this.errors = list);
   }

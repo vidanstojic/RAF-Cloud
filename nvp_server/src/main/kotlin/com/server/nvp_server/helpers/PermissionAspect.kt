@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException
 @Component
 class PermissionAspect(private val userService: UserService) {
 
-    @Around("@annotation(requiresAny)")  // N O V A
+    @Around("@annotation(requiresAny)")
     fun checkAnyPermission(
         joinPoint: ProceedingJoinPoint,
         requiresAny: RequiresAnyPermission
@@ -22,10 +22,8 @@ class PermissionAspect(private val userService: UserService) {
         val auth = SecurityContextHolder.getContext().authentication ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         val user = userService.findUserByEmail(auth.name).orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED) }
 
-        // ADMIN propust
         if (user.permissions.any { it == Permission.ADMIN }) return joinPoint.proceed()
 
-        // ako poseduje BILO KOJU od navedenih – propust
         val required = requiresAny.value
         val userPerms = user.permissions?.map { it.name } ?: emptyList()
         if (required.any { userPerms.contains(it) }) return joinPoint.proceed()

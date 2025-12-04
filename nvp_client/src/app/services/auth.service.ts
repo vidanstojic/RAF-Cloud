@@ -29,7 +29,6 @@ export class AuthService {
 }
   logout(): void { localStorage.clear(); }
 
-  /* ==========  JEDNA get metoda – pokriva sve slučajeve  ========== */
   get<T>(url: string, params?: HttpParams): Observable<T> {
     return this.http.get<T>(url, {
       headers: this.authHeaders(),
@@ -46,8 +45,6 @@ export class AuthService {
   delete<T>(url: string): Observable<void> {
     return this.http.delete<void>(url, { headers: this.authHeaders() });
   }
-
-  /* privatni helper */
   private authHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders()
@@ -58,15 +55,15 @@ export class AuthService {
   const token = localStorage.getItem('token');
   if (!token) return '';
   const payload = JSON.parse(atob(token.split('.')[1]));
-  return payload.sub || ''; // 'sub' je standardni JWT claim za email
+  return payload.sub || '';
 }
 getPermissionsFromToken(): string[] {
   const token = localStorage.getItem('token');
   if (!token) return [];
 
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));   // payload drugi deo
-    return payload.permissions || payload.authorities || [];  // prilagodi ključ
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.permissions || payload.authorities || [];
   } catch {
     return [];
   }
