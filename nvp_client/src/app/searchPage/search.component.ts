@@ -13,7 +13,6 @@ import { AuthService } from '../services/auth.service';
 export class SearchComponent implements OnInit, OnDestroy {
   private currentUserId = 0;
   machines: MachineDTO[] = [];
-  results: MachineDTO[] = [];
   qName = '';
   qType = 'all';
   qState = 'all';
@@ -48,6 +47,13 @@ export class SearchComponent implements OnInit, OnDestroy {
       next: data => {
         console.log('>>> Angular primio:', data); // ➜ ovde
         this.machines = data;
+        this.machines.forEach(m => {
+          console.log(`Processing machine: ${m.name} with state: ${m.state}`); // ➜ ovde
+          m.powerState = (m.state === 'ON' || m.state === 'RUNNING') ? 'on' : 'off';
+          m.starting = m.state === 'OCCUPIED' && m.powerState === 'off';
+          m.shuttingDown = m.state === 'OCCUPIED' && m.powerState === 'on';
+          m.restarting = false;
+        });
       },
       error: err => console.error(err)
     });
@@ -55,8 +61,18 @@ export class SearchComponent implements OnInit, OnDestroy {
     // običan user – samo svoje
     
     const userId = this.auth.getUserIdFromToken();
-    this.machineService.getMachinesByUser(userId).subscribe({
-      next: data => this.machines = data,
+    this.machineService.getAllMachines().subscribe({
+      next: data => {
+        console.log('>>> Angular primio:', data); // ➜ ovde
+        this.machines = data;
+        this.machines.forEach(m => {
+          console.log(`Processing machine: ${m.name} with state: ${m.state}`); // ➜ ovde
+          m.powerState = (m.state === 'ON' || m.state === 'RUNNING') ? 'on' : 'off';
+          m.starting = m.state === 'OCCUPIED' && m.powerState === 'off';
+          m.shuttingDown = m.state === 'OCCUPIED' && m.powerState === 'on';
+          m.restarting = false;
+        });
+      },
       error: err => console.error(err)
     });
   }
@@ -67,7 +83,7 @@ export class SearchComponent implements OnInit, OnDestroy {
       this.qName || undefined,
       this.qType === 'all' ? undefined : this.qType,
       this.qState === 'all' ? undefined : this.qState
-    ).subscribe(res => this.results = res);
+    ).subscribe(res => this.machines = res);
   }
 
   reset(): void {
@@ -161,7 +177,7 @@ isDisabled(m: MachineDTO): boolean {
   }
   private subscribeToMachineStatus(): void {
   this.wsSubscription = this.webSocketService.messages.subscribe(status => { 
-    const machineToUpdate = this.results.find(m => m.id === status.machineId); //
+    const machineToUpdate = this.machines.find(m => m.id === status.machineId); //
 
     if (machineToUpdate) {
       
@@ -178,7 +194,7 @@ isDisabled(m: MachineDTO): boolean {
           machineToUpdate.state = 'RUNNING';
           machineToUpdate.restarting = false;
           machineToUpdate.starting = false;
-          machineToUpdate.powerState = 'on'; //
+          machineToUpdate.powerState = 'on';
           break;
 
         case '201':
