@@ -11,6 +11,7 @@ import com.server.nvp_server.repository.MachineRepository
 import com.server.nvp_server.repository.SchedulerRepository
 import com.server.nvp_server.websocket.dto.MachineStatusMessage
 import com.server.nvp_server.websocket.publisher.MachineStatusPublisher
+import jakarta.transaction.Transactional
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -160,7 +161,7 @@ class MachineService(
             println("POSLATO: RUNNING status nakon 10 sekundi za mašinu ${machine.name}")
         }
     }
-
+    @Transactional
     @Scheduled(fixedRate = 3000)
     fun checkOperations() {
         val scheduled = schedulerRepository.findAllByScheduledTimeBetween(LocalDateTime.now().minusMinutes(1), LocalDateTime.now())
@@ -169,15 +170,9 @@ class MachineService(
             if (!scheduler.machine.active){
                 errorService.createErrorLog(ErrorLog(0,"Can not execute operation " + scheduler.operation + "because machine is destroyed",scheduler.machine,scheduler.operation))
                 machineStatusPublisher.sendStatusUpdate(MachineStatusMessage(scheduler.machine.id,"404",0))
+                schedulerRepository.delete(scheduler)
                 continue
             }
-            val statusMessage = MachineStatusMessage(
-                machineId = scheduler.machine.id,
-                status = "SCHEDULED_${scheduler.operation.toUpperCase()}",
-                progress = 0
-            )
-            println(statusMessage)
-            machineStatusPublisher.sendStatusUpdate(statusMessage)
 
             if (scheduler.operation.equals("start"))
                 startMachine(scheduler.machine.id)
