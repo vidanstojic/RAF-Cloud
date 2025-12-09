@@ -74,13 +74,12 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 }
   search(): void {
-    this.machineService.searchUserMachines(
-      this.currentUserId,
-      this.qName || undefined,
-      this.qType === 'all' ? undefined : this.qType,
-      this.qState === 'all' ? undefined : this.qState
-    ).subscribe(res => this.machines = res);
-  }
+  this.machineService.search(
+    this.qName || undefined,
+    this.qType === 'all' ? undefined : this.qType,
+    this.qState === 'all' ? undefined : this.qState
+  ).subscribe(res => this.machines = res);
+}
 
   reset(): void {
     this.qName = '';
