@@ -83,7 +83,7 @@ getUserIdFromToken(): number {
 hasAnyReadingPermission(): boolean {
   const perms = JSON.parse(localStorage.getItem('permissions') || '[]') as string[];
   if (perms.includes('ADMIN')) return true; 
-  const readingPerms = ['READING_USER', 'READING_ADMIN']; 
+  const readingPerms = ['READING_USER', 'READING_MACHINE', 'READING_ERROR','SEARCHING_MACHINE']; 
   return perms.some(p => readingPerms.includes(p));
 }
 }
