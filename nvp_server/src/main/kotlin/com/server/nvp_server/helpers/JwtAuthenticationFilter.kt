@@ -1,47 +1,42 @@
 package com.server.nvp_server.helpers
 
+import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
-import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class JwtAuthenticationFilter(
-private val jwtUtil: JwtUtil
-) : OncePerRequestFilter() {
+    private val jwtUtil: JwtUtil
+) : Filter {
 
-    override fun doFilterInternal(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        chain: FilterChain
-    ) {
-        val header = request.getHeader("Authorization")
+    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+        println("JWT FILTER HIT")
+
+        val httpReq = request as HttpServletRequest
+        val header = httpReq.getHeader("Authorization")
+
+
         if (header != null && header.startsWith("Bearer ")) {
             val token = header.substring(7)
             try {
-                val email = jwtUtil.extractEmail(token)
                 if (jwtUtil.isTokenValid(token)) {
-                    val authorities = jwtUtil.extractAuthorities(token).toMutableList()
+                    val email = jwtUtil.extractEmail(token)
+                    val permissions = jwtUtil.extractAuthorities(token)
 
-                    if ("ADMIN" in authorities) {
-                        authorities.add("ADMIN")
-                    }
-
-                    val auth = UsernamePasswordAuthenticationToken(
-                        email,
-                        null,
-                        authorities.map { SimpleGrantedAuthority(it) }
-                    )
-                    SecurityContextHolder.getContext().authentication = auth
+                    AuthContext.set(AuthUser(email, permissions))
                 }
             } catch (e: Exception) {
-                println("Nevalidan token")
+                println("INVALID TOKEN")
             }
         }
-        chain.doFilter(request, response)
+
+        try {
+            chain.doFilter(request, response)
+        } finally {
+            AuthContext.clear()
+        }
     }
 }

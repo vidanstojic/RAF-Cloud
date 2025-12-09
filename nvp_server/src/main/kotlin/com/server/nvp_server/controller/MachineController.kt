@@ -1,12 +1,10 @@
 package com.server.nvp_server.controller
 import MachineDTO
+import MachineMapper
 import com.server.nvp_server.helpers.RequiresAnyPermission
-import com.server.nvp_server.model.Machine
-import com.server.nvp_server.model.MachineState
 import com.server.nvp_server.service.MachineService
 import com.server.nvp_server.service.UserService
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
-import java.security.Principal
-import java.util.UUID
 
 @RestController
 @RequestMapping("/api/machines")
@@ -31,9 +27,7 @@ class MachineController(
     fun getMachines(@RequestParam(required = false) name: String?,
                     @RequestParam(required = false) type: String?,
                     @RequestParam(required = false) state: String?): List<MachineDTO> {
-        println(">>> Principal: ${SecurityContextHolder.getContext().authentication}")
-        println(">>> Authorities: ${SecurityContextHolder.getContext().authentication?.authorities}")
-        return machineService.searchMachines(name, type, state).map { MachineMapper.toDTO(it) };
+       return machineService.searchMachines(name, type, state).map { MachineMapper.toDTO(it) };
 
     }
 
@@ -50,25 +44,23 @@ class MachineController(
     @GetMapping("/user/{userId}")
     @RequiresAnyPermission("READING_MACHINE", "ADMIN")
     fun getMachinesByUserId(@PathVariable userId: Long?): List<MachineDTO> {
-        val effectiveId = userId ?: run {
-            val email = SecurityContextHolder.getContext().authentication.name
-            userService.findUserByEmail(email).orElseThrow().id
-                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
-        }
+        val user = userId?.let { userService.getUserById(it) }
 
-        return machineService.getMachinesByUser(userService.findUserByEmail(SecurityContextHolder.getContext().authentication.name).orElseThrow())
-            .map { MachineMapper.toDTO(it) }
+        if (user != null)
+            return machineService.getMachinesByUser(user).map { MachineMapper.toDTO(it) }
+        else
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
     }
 
     @PostMapping
     @RequiresAnyPermission("CREATING_MACHINE", "ADMIN")
     fun createMachine(@RequestBody dto: MachineDTO): MachineDTO {
-        val email = SecurityContextHolder.getContext().authentication.name
-        val owner = userService.findUserByEmail(email)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        val user = dto.createdBy?.let { userService.getUserById(it) }
 
-        val machine = machineService.createMachine(dto, owner.orElseThrow())
-        return MachineMapper.toDTO(machine)
+        if (user != null)
+            return MachineMapper.toDTO(machineService.createMachine(dto,user))
+        else
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
     }
     @GetMapping("/user/{userId}/search")
     @RequiresAnyPermission("READING_MACHINE", "ADMIN")
