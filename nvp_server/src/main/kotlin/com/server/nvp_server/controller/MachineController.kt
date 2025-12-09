@@ -55,6 +55,7 @@ class MachineController(
     @PostMapping
     @RequiresAnyPermission("CREATING_MACHINE", "ADMIN")
     fun createMachine(@RequestBody dto: MachineDTO): MachineDTO {
+        println("Usao u create machine")
         val user = dto.createdBy?.let { userService.getUserById(it) }
 
         if (user != null)

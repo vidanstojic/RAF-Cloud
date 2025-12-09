@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MachineService, MachineDTO } from '../services/machine.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-create-machine',
@@ -18,7 +20,7 @@ export class CreateMachineComponent {
 
   constructor(private fb: FormBuilder,
               private machineService: MachineService,
-              private router: Router) {
+              private router: Router, private auth: AuthService, private UserService: UserService) {
     this.machineForm = this.fb.group({
       name: ['', Validators.required],
       type: ['', Validators.required],
@@ -27,24 +29,23 @@ export class CreateMachineComponent {
   }
 
   onSubmit(): void {
-    if (this.machineForm.invalid) return;
+  if (this.machineForm.invalid) return;
 
-    const user = JSON.parse(localStorage.getItem('loggedUser') || '{}');
-    const dto: MachineDTO = {
-      id: localStorage.getItem('loggedUser') ? undefined : -1,
-      powerState: 'off',
-      name: this.machineForm.value.name,
-      type: this.machineForm.value.type,
-      description: this.machineForm.value.description,
-      createdBy: user.id
-    };
+  const dto: MachineDTO = {
+    id: undefined,
+    powerState: 'off',
+    name: this.machineForm.value.name,
+    type: this.machineForm.value.type,
+    description: this.machineForm.value.description,
+    createdBy: this.auth.getUserIdFromToken()  // ➜ koristi ID iz tokena
+  };
 
-    this.machineService.create(dto).subscribe({
-      next: () => {
-        alert('Machine created');
-        this.router.navigate(['/search-machines']);
-      },
-      error: err => alert(err.message)
-    });
-  }
+  this.machineService.create(dto).subscribe({
+    next: () => {
+      alert('Machine created');
+      this.router.navigate(['/search-machines']);
+    },
+    error: err => alert(err.message)
+  });
+}
 }
