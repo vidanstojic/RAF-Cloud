@@ -37,7 +37,7 @@ export class CreateMachineComponent {
     name: this.machineForm.value.name,
     type: this.machineForm.value.type,
     description: this.machineForm.value.description,
-    createdBy: this.auth.getUserIdFromToken()  // ➜ koristi ID iz tokena
+    createdBy: this.auth.getUserIdFromToken()  
   };
 
   this.machineService.create(dto).subscribe({
