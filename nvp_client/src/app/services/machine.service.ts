@@ -43,8 +43,9 @@ export class MachineService {
     if (name)   params = params.set('name', name);
     if (type)   params = params.set('type', type);
     if (state)  params = params.set('state', state);
-    return this.auth.get<MachineDTO[]>(this.api, params);
+    return this.auth.get<MachineDTO[]>(`${this.api}/search`, params);
   }
+  
 
   searchUserMachines(userId: number, name?: string, type?: string, state?: string): Observable<MachineDTO[]> {
     let params = new HttpParams();

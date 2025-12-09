@@ -1,6 +1,7 @@
 package com.server.nvp_server.controller
 import MachineDTO
 import MachineMapper
+import com.server.nvp_server.helpers.JwtUtil
 import com.server.nvp_server.helpers.RequiresAnyPermission
 import com.server.nvp_server.service.MachineService
 import com.server.nvp_server.service.UserService
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -20,7 +22,8 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping("/api/machines")
 class MachineController(
     private val machineService: MachineService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val jwtUtil: JwtUtil
 ) {
 
     @GetMapping
@@ -73,6 +76,31 @@ class MachineController(
     ): List<MachineDTO> =
         machineService.searchUserMachines(userId, name, type, state)
             .map { MachineMapper.toDTO(it) }
+
+
+    @GetMapping("/search")
+    @RequiresAnyPermission("READING_MACHINE", "ADMIN")
+    fun searchMachines(
+        @RequestParam(required = false) name: String?,
+        @RequestParam(required = false) type: String?,
+        @RequestParam(required = false) state: String?,
+        @RequestHeader("Authorization") authHeader: String
+    ): List<MachineDTO> {
+
+        val token = authHeader.removePrefix("Bearer ").trim()
+        val email = jwtUtil.extractEmail(token)
+        val user = userService.findUserByEmail(email).orElseThrow()
+        val isAdmin = user.permissions.any { it.name == "ADMIN" }
+
+        val machines = if (isAdmin) {
+            machineService.searchMachines(name, type, state)
+        } else {
+            machineService.searchUserMachines(user.id!!, name, type, state)
+        }
+
+        return machines.map { MachineMapper.toDTO(it) }
+    }
+
 
     @GetMapping("/{id}")
     @RequiresAnyPermission("READING_MACHINE", "ADMIN")
