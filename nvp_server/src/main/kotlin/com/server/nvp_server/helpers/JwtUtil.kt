@@ -18,11 +18,12 @@ class JwtUtil {
             .signWith(key)
             .compact()
 
-    fun generateToken(email: String, authorities: List<String>): String =
+    fun generateToken(email: String, authorities: List<String>, userId: Long): String =
         Jwts.builder()
             .setSubject(email)
             .setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 60))
             .claim("authorities", authorities)
+            .claim("userId", userId)          // ➜ DODAJ OVO
             .signWith(key)
             .compact()
 

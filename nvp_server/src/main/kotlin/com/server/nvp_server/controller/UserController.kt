@@ -39,7 +39,7 @@ class UserController(
 
         val perms = user.orElseThrow().permissions?.map { it.name } ?: emptyList()
 
-        val token = jwtUtil.generateToken(user.orElseThrow().email, perms)
+        val token = jwtUtil.generateToken(user.orElseThrow().email, perms, user.orElseThrow().id)
 
         return LoginResponse(token, perms)
     }
