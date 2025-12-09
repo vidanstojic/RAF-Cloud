@@ -57,7 +57,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     });
   } else {
     const userId = this.auth.getUserIdFromToken();
-    this.machineService.getAllMachines().subscribe({
+    this.machineService.getMachinesByUser(userId).subscribe({
       next: data => {
         console.log('>>> Angular primio:', data);
         this.machines = data;
